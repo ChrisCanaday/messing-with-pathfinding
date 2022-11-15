@@ -30,7 +30,7 @@ void Dstar::Initialize(){
   U.push(s_goal);             // U.Insert(s_goal)
 }
 
-// euclidean distance
+// returns euclidean distance between node from and to
 double Dstar::CalculateHeuristic(const state &to, const state &from) const{
   int di = abs(from.i - to.i);
   int dj = abs(from.j - to.j);
