@@ -22,14 +22,15 @@ struct state{
   }
 };
 
+template <class T, class U>
 class PQ{
   public:
     PQ();
-    void Insert(state s, std::pair<double,double> k);
-    void Update(state s, std::pair<double,double> k);
+    void Insert(T s, U k);
+    void Update(T s, U k);
     state Top();
-    std::pair<double,double> TopKey();
-    void Remove(state s);
+    U TopKey();
+    void Remove(T s);
     bool Empty();
 
 
