@@ -25,7 +25,7 @@ class Dstar{
     PQ U;
 
     std::vector<state> all_states;
-    std::vector<std::vector<state>> grid;
+    std::vector<std::vector<state> > grid;
 };
 
 #endif

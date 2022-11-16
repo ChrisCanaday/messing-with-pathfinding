@@ -104,8 +104,8 @@ void Dstar::GetSuccessors(state &u, std::vector<state> &s){
 bool Dstar::IsOccupied(int i, int j){
   //printf("grid.size() = %d\n",(int)grid.size());
   //printf(" check occupancy %d,%d\n",i,j);
-  if(i >= grid.size() || i < 0) return true;
-  if(j >= grid[0].size() || j < 0) return true;
+  if(i >= (int) grid.size() || i < 0) return true;
+  if(j >= (int) grid[0].size() || j < 0) return true;
   return (grid[i][j].cost < 0);
 }
 
