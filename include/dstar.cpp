@@ -1,12 +1,12 @@
 #include "dstar.h"
-#include <algorithm>
-#include <cmath>
 
 // calculates h if needed then calculates k (priority)
-void Dstar::CalculateKey(state s){
+priority Dstar::CalculateKey(state s){
+  priority tmp;
   if(s.h == 0.0) s.h = CalculateHeuristic(s_start,s);
-  s.k.first = std::min(s.g, s.rhs) + s.h + k_m;
-  s.k.second = std::min(s.g, s.rhs);
+  tmp.first = std::min(s.g, s.rhs) + s.h + k_m;
+  tmp.second = std::min(s.g, s.rhs);
+  return tmp;
 }
 
 // psuedo code rn
@@ -17,7 +17,7 @@ void Dstar::UpdateVertex(state u){
 }
 
 void Dstar::Initialize(){
-  while(!U.empty()) U.pop();  // U = null
+  while(!U.Empty()) U.Pop();  // U = null
   k_m = 0;                    // k_m = 0
 
   // set all states rhs and g to DBL_MAX
@@ -26,8 +26,8 @@ void Dstar::Initialize(){
     all_states[i].rhs = DBL_MAX;
   }
   s_goal.rhs = 0;             // rhs(s_goal) = 0
-  CalculateKey(s_goal);       // [h(s_start, s_goal); 0]
-  U.push(s_goal);             // U.Insert(s_goal)
+  //CalculateKey(s_goal);       // [h(s_start, s_goal); 0]
+  U.Insert(s_goal,CalculateKey(s_goal));             // U.Insert(s_goal,[h(s_start, s_goal); 0])
 }
 
 // returns euclidean distance between node from and to

@@ -1,14 +1,13 @@
 #ifndef DSTAR_H
 #define DSTAR_H
 
-#include <utility>
-#include <queue>
-#include <vector>
 #include "priorityq.h"
+#include <algorithm>
+#include <cmath>
 
 class Dstar{
   public:
-    void CalculateKey(state s);
+    priority CalculateKey(state s);
     void Initialize();
     void UpdateVertex(state u);
     void ComputeShortestPath();
@@ -17,11 +16,10 @@ class Dstar{
     //void SetStart();
     //void SetEnd();
 
-  private:
     state s_start, s_goal, s_current;
     double k_m;
 
-    std::priority_queue<state, std::vector<state>, std::greater<state>> U;
+    PQ U;
 
     std::vector<state> all_states;
 };
