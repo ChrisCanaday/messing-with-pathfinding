@@ -15,6 +15,7 @@ class PQ{
     void Print();
     state Top();
     void Pop();
+    bool Present(state s);
 
 
   private:

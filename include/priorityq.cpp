@@ -139,6 +139,10 @@ void PQ::Pop(){
     Remove(Top());
 }
 
+bool PQ::Present(state s){
+    return (s.id != -1 && s.id < size);
+}
+
 // clears list and prints at same time (prints in order)
 void PQ::Print(){
     int i, num = size;
