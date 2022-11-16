@@ -1,8 +1,8 @@
 #include "priorityq.h"
 
 PQ::PQ(){
-    inf.first = DBL_MAX;
-    inf.second = DBL_MAX;
+    inf.first = DBL_MAX/2;
+    inf.second = DBL_MAX/2;
     size = 0;
     // setup and add all nodes to the PQ
 }
@@ -39,6 +39,7 @@ void PQ::PercolateUp(state &s){
             heap[i].id = i;
             i = p;
             s.id = p;
+            heap[p].id = p;
         }else{
             return;
         }

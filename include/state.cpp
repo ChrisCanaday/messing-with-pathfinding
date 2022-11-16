@@ -1,12 +1,12 @@
 #include "state.h"
 
 state::state(){
-    g = DBL_MAX;
-    rhs = DBL_MAX;
+    g = DBL_MAX/2;
+    rhs = DBL_MAX/2;
     h = 0.0;
     i = -1;
     j = -1;
     id = -1;
-    k.first = DBL_MAX;
-    k.second = DBL_MAX;
+    k.first = DBL_MAX/2;
+    k.second = DBL_MAX/2;
 }

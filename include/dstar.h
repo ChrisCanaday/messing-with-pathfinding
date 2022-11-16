@@ -19,7 +19,7 @@ class Dstar{
     //void SetStart();
     //void SetEnd();
 
-    state s_start, s_goal, s_last;
+    state *s_start, *s_goal, *s_last;
     double k_m;
 
     PQ U;
