@@ -1,38 +1,18 @@
 #include "../include/dstar.h"
 
 int main(){
-    //Dstar dstar;
-    state *tmp;
-    std::pair<double,double> k;
-    state tmp1;
-    PQ priority_queue;
+    Dstar dstar;
+    int i,j;
 
-    for(int i = 0; i < 10; i++){
-        tmp = new state;
-        k.first = i%2;
-        k.second = i;
-        priority_queue.Insert(*tmp,k);
+    //dstar.Initialize();
+    dstar.Main();
+
+    for(i = 0; i < (int) dstar.grid.size(); i++){
+        for(j = 0; j < (int) dstar.grid[0].size(); j++){
+            printf("%d:%d ",i,j);
+            std::cout << dstar.grid[i][j].k.first << "|" << dstar.grid[i][j].k.second << std::endl;
+        }
     }
-
-    priority_queue.Print();
-
-    for(int i = 0; i < 10; i++){
-        tmp = new state;
-        k.first = i%2;
-        k.second = i;
-        priority_queue.Insert(*tmp,k);
-    }
-
-    k.first = 100;
-    k.second = 2.3;
-    priority_queue.Update(*tmp,k);
-    priority_queue.Print();
-
-    /*for(int i = 0; i < 10; i++){
-        tmp1 = priority_queue.Top();
-        
-    }*/
-    //printf("afterprint\n");
     
     return 0;
 }

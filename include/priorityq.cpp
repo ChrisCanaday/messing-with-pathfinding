@@ -9,7 +9,7 @@ PQ::PQ(){
 
 // insert state s with priority k
 // set k in the s then insert most likely
-void PQ::Insert(state s, priority k){
+void PQ::Insert(state &s, priority k){
     int i;
 
     // get index
@@ -26,10 +26,10 @@ void PQ::Insert(state s, priority k){
     PercolateUp(s);
 }
 
-void PQ::PercolateUp(state s){
+void PQ::PercolateUp(state &s){
     int i = s.id, p;
 
-    printf("i: %d\n",i);
+    //printf("i: %d\n",i);
     while(i > 0){
         p = (i-1)/2;
 
@@ -67,10 +67,11 @@ void PQ::Update(state s, priority k){
     }else if((ileft < size-1 && iright < size-1) && (s > heap[ileft] || s > heap[iright])){
         PercolateDown(ileft,iright);
     }
+
 }
 
 // return the smallest state (aka the top)
-state PQ::Top(){
+state &PQ::Top(){
     return heap[0];
 }
 
@@ -154,4 +155,8 @@ void PQ::Print(){
         std::cout << tmp.k.first << "|" << tmp.k.second << std::endl;
         Remove(tmp);
     }
+}
+
+int PQ::GetSize(){
+    return size;
 }
