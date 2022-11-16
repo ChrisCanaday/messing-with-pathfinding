@@ -3,7 +3,8 @@
 // calculates h if needed then calculates k (priority)
 priority Dstar::CalculateKey(state &s){
   priority tmp;
-  if(s.h == 0.0) s.h = CalculateHeuristic(*s_start,s);
+  s.h = CalculateHeuristic(*s_start,s);
+  std::cout << s.h << std::endl; 
   tmp.first = std::min(s.g, s.rhs) + s.h + k_m;
   tmp.second = std::min(s.g, s.rhs);
   return tmp;
@@ -17,7 +18,7 @@ void Dstar::UpdateVertex(state &u){
   }else if(u.g != u.rhs && !U.Present(u)){
     printf("add\n");
     /*u.id = */U.Insert(u,CalculateKey(u));
-   // grid[u.i][u.j] = u;
+    grid[u.i][u.j] = u;
   }else if(u.g == u.rhs && U.Present(u)){
     printf("remove\n");
     U.Remove(u);
@@ -28,11 +29,12 @@ void Dstar::Initialize(){
   while(!U.Empty()) U.Pop();                            // U = null
   k_m = 0;                                              // k_m = 0
   std::vector<state> tmp;
+  changed = false;
 
   // set all states rhs and g to DBL_MAX
   for(int i = 0; i < (int) all_states.size(); i++){
-    all_states[i].g = DBL_MAX/2;
-    all_states[i].rhs = DBL_MAX/2;
+    all_states[i].g = DBL_MAX;
+    all_states[i].rhs = DBL_MAX;
     all_states[i].cost = 1;
   }
 
@@ -89,16 +91,21 @@ void Dstar::GetPredecessors(state &u, std::vector<state> &s){
 
 void Dstar::GetSuccessors(state &u, std::vector<state> &s){
   s.clear();
+  
   if(IsOccupied(u.i,u.j)) return;
 
-  s.push_back(grid[u.i+1][u.j]);
-  s.push_back(grid[u.i+1][u.j+1]);
-  s.push_back(grid[u.i][u.j+1]);
-  s.push_back(grid[u.i-1][u.j+1]);
-  s.push_back(grid[u.i-1][u.j]);
-  s.push_back(grid[u.i-1][u.j-1]);
-  s.push_back(grid[u.i][u.j-1]);
-  s.push_back(grid[u.i+1][u.j-1]);
+  if(InBounds(u.i+1,u.j)) s.push_back(grid[u.i+1][u.j]);
+  if(InBounds(u.i+1,u.j+1)) s.push_back(grid[u.i+1][u.j+1]);
+  if(InBounds(u.i,u.j+1)) s.push_back(grid[u.i][u.j+1]);
+  if(InBounds(u.i-1,u.j+1)) s.push_back(grid[u.i-1][u.j+1]);
+  if(InBounds(u.i-1,u.j)) s.push_back(grid[u.i-1][u.j]);
+  if(InBounds(u.i-1,u.j-1)) s.push_back(grid[u.i-1][u.j-1]);
+  if(InBounds(u.i,u.j-1)) s.push_back(grid[u.i][u.j-1]);
+  if(InBounds(u.i+1,u.j-1)) s.push_back(grid[u.i+1][u.j-1]);
+}
+
+bool Dstar::InBounds(int i, int j){
+  return ((i < grid.size() && i >= 0) && (j < grid[0].size()  && j >= 0));
 }
 
 bool Dstar::IsOccupied(int i, int j){
@@ -106,7 +113,35 @@ bool Dstar::IsOccupied(int i, int j){
   //printf(" check occupancy %d,%d\n",i,j);
   if(i >= (int) grid.size() || i < 0) return true;
   if(j >= (int) grid[0].size() || j < 0) return true;
+  //if(grid[i][j].g == grid[i][j].rhs) return true;
   return (grid[i][j].cost < 0);
+}
+
+void Dstar::MakePath(){
+  std::vector<state> s;
+  state u, min2;
+  priority min;
+  int i;
+
+  min.first = DBL_MAX;
+  min.second = DBL_MAX;
+  min2.k = min;
+
+
+  path.clear();
+  u = *s_start;
+  path.push_back(u);
+  while(u != *s_goal){
+    GetPredecessors(u,s);
+    min2.k = min;
+
+    for(i = 0; i < (int) s.size(); i++){
+      if(min2 > s[i]) min2 = s[i];
+    }
+
+    path.push_back(min2);
+    u = min2;
+  }
 }
 
 void Dstar::ComputeShortestPath(){
@@ -120,8 +155,10 @@ void Dstar::ComputeShortestPath(){
   while(U.TopKey() < CalculateKey(*s_start) || s_start->rhs > s_start->g){
     u = U.Top();
     printf("y.id %d\n",u.id);
+    printf("i:%d j:%d\n",u.i,u.j);
     k_old = U.TopKey();
     k_new = CalculateKey(u);
+    std::cout << u.g << " & " << u.rhs << std::endl;
 
     printf("after init SIZE %d\n", U.GetSize());
     std::cout << k_old.first << "|" << k_old.second << std::endl;
@@ -137,7 +174,7 @@ void Dstar::ComputeShortestPath(){
       printf("second if begon\n");
       u.g = u.rhs;
       std::cout << u.g << " > " << u.rhs << std::endl;
-      u.cost = 0;
+      //u.cost = 0;
       grid[u.i][u.j] = u;
       printf("uid %d\n",u.id);
       printf("i:%d j:%d\n",u.i,u.j);
@@ -154,7 +191,7 @@ void Dstar::ComputeShortestPath(){
       for(i = 0; i < (int) s.size(); i++){
         //printf("4 %d\n",i);
         //printf("s[%d].i = %d: s[%d].j = %d\n",i,s[i].i,i,s[i].j);
-        if(s[i] != *s_goal && s[i].cost > 0) s[i].rhs = std::min(s[i].rhs, CalculateHeuristic(s[i],u) + u.g);
+        if(s[i] != *s_goal /*&& s[i].cost > 0*/) s[i].rhs = std::min(s[i].rhs, CalculateHeuristic(s[i],u) + u.g);
         //printf("4:2\n");
         UpdateVertex(s[i]);
         //printf("update\n");
@@ -163,7 +200,7 @@ void Dstar::ComputeShortestPath(){
     }else{
       printf("third if begon\n");
       g_old = u.g;
-      u.g = DBL_MAX/2;
+      u.g = DBL_MAX;
       
       GetPredecessors(u,s);
 
@@ -186,16 +223,56 @@ void Dstar::ComputeShortestPath(){
       // UpdateVertex s at end
     }
   }
+
+  MakePath();
 }
 
 // main driver (react to changes)
 void Dstar::Main(){
+  double c_old;
+  std::vector<state> tmp,tmp1;
+  double min = DBL_MAX;
+
   s_last = s_start;
   Initialize();
   printf("compute\n");
   ComputeShortestPath();
 
-  /*while(s_start != s_goal){
-    
+  /*printf("\n\n");
+    for(int i = 0; i < (int) path.size(); i++){
+        printf("%d:%d ",path[i].i,path[i].j);
+        std::cout << path[i].k.first << "|" << path[i].k.second << " rhs: " << path[i].rhs << " g " << path[i].g << std::endl;
+    }
+
+  //printf("hello\n");
+  std::cout << "HELLO" << std::endl;
+  grid[3][1].cost = -1;
+  //printf("2\n");
+  std::cout << "HELLO2" << std::endl;
+  changed = true;
+  std::cout << "HELLO3" << std::endl;
+  //printf("3\n");
+  changed_edges.push_back(grid[3][1]);
+  //printf("before\n");
+  std::cout << "HELLO4" << std::endl;
+
+  while(*s_start != *s_goal){
+    //std::cout << "RETURN" << std::endl;
+    if(s_start->rhs == DBL_MAX) return; // there is no path
+
+    //std::cout << "S_START PATH" << std::endl;
+    //std::cout << s_start->rhs << std::endl;
+    *s_start = path[1]; // set start to next thing in path
+    //std::cout << s_start->rhs << std::endl;
+    printf("start not goal\n");
+
+    // move robot to s_start
+
+    //std::cout << "CHANGE" << std::endl;
+    if(changed){
+      
+    }
+    //ComputeShortestPath();
   }*/
+  
 }

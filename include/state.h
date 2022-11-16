@@ -23,16 +23,10 @@ struct state{
   state();
 
   // comparison for priority queue
-  bool operator > (const state &a) const{
-    if(k.first-0.001 > a.k.first) return true;
-    else if(k.first < a.k.first-0.001) return false;
-    return k.second > a.k.second;
-  }
+  bool operator > (const state &a) const;
 
   // comparison for main D* Lite driver
-  bool operator != (const state &a) const{
-    return (i != a.i || j != a.j);
-  }
+  bool operator != (const state &a) const;
 };
 
 #endif

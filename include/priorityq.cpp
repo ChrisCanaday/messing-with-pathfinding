@@ -1,8 +1,8 @@
 #include "priorityq.h"
 
 PQ::PQ(){
-    inf.first = DBL_MAX/2;
-    inf.second = DBL_MAX/2;
+    inf.first = DBL_MAX;
+    inf.second = DBL_MAX;
     size = 0;
     // setup and add all nodes to the PQ
 }
