@@ -20,7 +20,7 @@ int main(){
             std::cout << dstar.grid[i][j].k.first << "|" << dstar.grid[i][j].k.second << std::endl;
         }
     }
-    printf("\n\n");
+    printf("\nALLSTATES\n");
 
     for(i = 0; i < (int) dstar.all_states.size(); i++){
         printf("%d:%d ",dstar.all_states[i].i,dstar.all_states[i].j);
@@ -28,7 +28,7 @@ int main(){
     }
 
     u = *dstar.s_start;
-    path.push_back(u);
+    /*path.push_back(u);
     while(u != *dstar.s_goal){
         dstar.GetPredecessors(u,s);
         min2.k = min;
@@ -39,11 +39,13 @@ int main(){
 
         path.push_back(min2);
         u = min2;
-    }
-    printf("\n\n");
-    for(i = 0; i < (int) path.size(); i++){
-        printf("%d:%d ",path[i].i,path[i].j);
-        std::cout << path[i].k.first << "|" << path[i].k.second << " rhs: " << path[i].rhs << " g " << path[i].g << std::endl;
+    }*/
+    printf("\nPATH\n");
+    printf("path.size() %ld\n",dstar.path.size());
+    //std::cout << "path.size() " << dstar.path.size()
+    for(i = 0; i < (int) dstar.path.size(); i++){
+        printf("%d:%d ",dstar.path[i].i,dstar.path[i].j);
+        std::cout << dstar.path[i].k.first << "|" << dstar.path[i].k.second << " rhs: " << dstar.path[i].rhs << " g " << dstar.path[i].g << std::endl;
     }
     
     

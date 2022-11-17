@@ -20,3 +20,7 @@ bool state::operator > (const state &a) const{
 bool state::operator != (const state &a) const{
   return (i != a.i || j != a.j);
 }
+
+bool state::operator == (const state &a) const{
+  return (i == a.i && j == a.j);
+}

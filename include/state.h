@@ -27,6 +27,8 @@ struct state{
 
   // comparison for main D* Lite driver
   bool operator != (const state &a) const;
+
+  bool operator == (const state &a) const;
 };
 
 #endif

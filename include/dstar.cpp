@@ -4,7 +4,7 @@
 priority Dstar::CalculateKey(state &s){
   priority tmp;
   s.h = CalculateHeuristic(*s_start,s);
-  std::cout << s.h << std::endl; 
+  //std::cout << s.h << std::endl; 
   tmp.first = std::min(s.g, s.rhs) + s.h + k_m;
   tmp.second = std::min(s.g, s.rhs);
   return tmp;
@@ -79,14 +79,14 @@ void Dstar::GetPredecessors(state &u, std::vector<state> &s){
 
   // check every block around us
   //printf("before block\n");
-  if(!IsOccupied(u.i+1,u.j)) s.push_back(grid[u.i+1][u.j]);
-  if(!IsOccupied(u.i+1,u.j+1)) s.push_back(grid[u.i+1][u.j+1]);
-  if(!IsOccupied(u.i,u.j+1)) s.push_back(grid[u.i][u.j+1]);
-  if(!IsOccupied(u.i-1,u.j+1)) s.push_back(grid[u.i-1][u.j+1]);
-  if(!IsOccupied(u.i-1,u.j)) s.push_back(grid[u.i-1][u.j]);
-  if(!IsOccupied(u.i-1,u.j-1)) s.push_back(grid[u.i-1][u.j-1]);
-  if(!IsOccupied(u.i,u.j-1)) s.push_back(grid[u.i][u.j-1]);
-  if(!IsOccupied(u.i+1,u.j-1)) s.push_back(grid[u.i+1][u.j-1]);
+  if(!IsOccupied(u.i+1,u.j)) if(grid[u.i+1][u.j] > u) s.push_back(grid[u.i+1][u.j]);
+  if(!IsOccupied(u.i+1,u.j+1)) if(grid[u.i+1][u.j+1] > u) s.push_back(grid[u.i+1][u.j+1]);
+  if(!IsOccupied(u.i,u.j+1)) if(grid[u.i][u.j+1] > u) s.push_back(grid[u.i][u.j+1]);
+  if(!IsOccupied(u.i-1,u.j+1)) if(grid[u.i-1][u.j+1] > u) s.push_back(grid[u.i-1][u.j+1]);
+  if(!IsOccupied(u.i-1,u.j)) if(grid[u.i-1][u.j] > u) s.push_back(grid[u.i-1][u.j]);
+  if(!IsOccupied(u.i-1,u.j-1)) if(grid[u.i-1][u.j-1] > u) s.push_back(grid[u.i-1][u.j-1]);
+  if(!IsOccupied(u.i,u.j-1)) if(grid[u.i][u.j-1] > u) s.push_back(grid[u.i][u.j-1]);
+  if(!IsOccupied(u.i+1,u.j-1)) if(grid[u.i+1][u.j-1] > u) s.push_back(grid[u.i+1][u.j-1]);
 }
 
 void Dstar::GetSuccessors(state &u, std::vector<state> &s){
@@ -105,7 +105,7 @@ void Dstar::GetSuccessors(state &u, std::vector<state> &s){
 }
 
 bool Dstar::InBounds(int i, int j){
-  return ((i < grid.size() && i >= 0) && (j < grid[0].size()  && j >= 0));
+  return ((i < (int) grid.size() && i >= 0) && (j < (int) grid[0].size()  && j >= 0));
 }
 
 bool Dstar::IsOccupied(int i, int j){
@@ -152,10 +152,19 @@ void Dstar::ComputeShortestPath(){
   int i;
 
   //printf("before loop\n");
+  std::cout << "SIZE: " << U.GetSize() << std::endl;
+  u = U.Top();
+  std::cout << "i: " << u.i << " j: " << u.j << std::endl;
+  std::cout << u.k.first << "|" << u.k.second << std::endl;
+  k_old = CalculateKey(*s_start);
+  std::cout << k_old.first << "|" << k_old.second << std::endl;
+
   while(U.TopKey() < CalculateKey(*s_start) || s_start->rhs > s_start->g){
     u = U.Top();
-    printf("y.id %d\n",u.id);
-    printf("i:%d j:%d\n",u.i,u.j);
+    //printf("y.id %d\n",u.id);
+    std::cout << "y.id " << u.id << std::endl;
+    //printf("i:%d j:%d\n",u.i,u.j);
+    std::cout << "i: " << u.i << " j: " << u.j << std::endl;
     k_old = U.TopKey();
     k_new = CalculateKey(u);
     std::cout << u.g << " & " << u.rhs << std::endl;
@@ -224,7 +233,7 @@ void Dstar::ComputeShortestPath(){
     }
   }
 
-  MakePath();
+  //MakePath();
 }
 
 // main driver (react to changes)
@@ -232,13 +241,15 @@ void Dstar::Main(){
   double c_old;
   std::vector<state> tmp,tmp1;
   double min = DBL_MAX;
+  priority big;\
+  state s;
 
   s_last = s_start;
   Initialize();
   printf("compute\n");
   ComputeShortestPath();
 
-  /*printf("\n\n");
+  printf("\n\n");
     for(int i = 0; i < (int) path.size(); i++){
         printf("%d:%d ",path[i].i,path[i].j);
         std::cout << path[i].k.first << "|" << path[i].k.second << " rhs: " << path[i].rhs << " g " << path[i].g << std::endl;
@@ -252,9 +263,14 @@ void Dstar::Main(){
   changed = true;
   std::cout << "HELLO3" << std::endl;
   //printf("3\n");
-  changed_edges.push_back(grid[3][1]);
+
+  GetPredecessors(grid[3][1],tmp);
+  for(size_t i = 0; i < tmp.size(); i++) changed_edges.push_back(tmp[i]);
+  //changed_edges.push_back(grid[3][1]);
   //printf("before\n");
   std::cout << "HELLO4" << std::endl;
+  path.clear();
+  path.push_back(*s_start);
 
   while(*s_start != *s_goal){
     //std::cout << "RETURN" << std::endl;
@@ -262,17 +278,60 @@ void Dstar::Main(){
 
     //std::cout << "S_START PATH" << std::endl;
     //std::cout << s_start->rhs << std::endl;
-    *s_start = path[1]; // set start to next thing in path
+    // NOT UPDATING PATH CORRECTLY BOUNCES BACK AND FORTH
+    // FIXED FOR NOW (CHANGED HOW GET PREDECESSORS WORKS)
+    GetPredecessors(*s_start, tmp1);
+    big.first = DBL_MAX;
+    big.second = DBL_MAX;
+    s.k = big;
+    for(size_t i = 0; i < tmp1.size(); i++){
+      if(s > tmp1[i]){
+        s = tmp1[i];
+      }
+    }
+
+    //*s_start = s;
+    s_start = &grid[s.i][s.j];
+    path.push_back(*s_start);
+
+    std::cout << s_start->i << "&" << s_start->j << " | " << s_goal->i << "&" << s_goal->j << std::endl;
+    
+    //*s_start = path[1]; // set start to next thing in path
     //std::cout << s_start->rhs << std::endl;
-    printf("start not goal\n");
+    //printf("start not goal\n");
+    std::cout << "START NOT GOAL" << std::endl;
 
     // move robot to s_start
 
     //std::cout << "CHANGE" << std::endl;
     if(changed){
-      
+      min = DBL_MAX;
+      k_m = k_m + CalculateHeuristic(*s_last,*s_start);
+      s_last = s_start;
+
+      for(size_t i = 0; i < changed_edges.size(); i++){
+        c_old = changed_edges[i].h;
+        changed_edges[i].h = CalculateHeuristic(changed_edges[i],*s_start);
+
+        if(c_old > changed_edges[i].h){
+          if(changed_edges[i] != *s_goal) changed_edges[i].rhs = std::min(changed_edges[i].rhs, changed_edges[i].h + s_start->g);
+        }else if(changed_edges[i].rhs == c_old + s_start->g){
+          if(changed_edges[i] != *s_goal){
+            GetSuccessors(changed_edges[i],tmp1);
+            for(size_t j = 0; j < tmp1.size(); j++){
+              min = std::min(min,CalculateHeuristic(changed_edges[i],tmp1[j]) + tmp1[j].g);
+            }
+          }
+        }
+        std::cout << "UPDATE VERTEX" << std::endl;
+        UpdateVertex(changed_edges[i]);
+      }
+      changed_edges.clear();
+      changed = false;
+      std::cout << "ComputeShortestPath()" << std::endl;
+      ComputeShortestPath();
     }
     //ComputeShortestPath();
-  }*/
+  }
   
 }
