@@ -48,6 +48,11 @@ int main(){
         std::cout << dstar.path[i].k.first << "|" << dstar.path[i].k.second << " rhs: " << dstar.path[i].rhs << " g " << dstar.path[i].g << std::endl;
     }
     
+    printf("\nHEAP\n");
+    for(i = 0; i < dstar.U.heap.size(); i++){
+        printf("%d:%d ",dstar.U.heap[i].i,dstar.U.heap[i].j);
+        std::cout << dstar.U.heap[i].k.first << "|" << dstar.U.heap[i].k.second << " rhs: " << dstar.U.heap[i].rhs << " g " << dstar.U.heap[i].g << std::endl;
+    }
     
     return 0;
 }

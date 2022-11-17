@@ -15,15 +15,18 @@ void Dstar::UpdateVertex(state &u){
   std::cout << U.GetSize() << std::endl;
   if(u.g != u.rhs && U.Present(u)){
     U.Update(u,CalculateKey(u));
+    std:: cout << "ID = " << u.id << std::endl;
     grid[u.i][u.j] = u;
   }else if(u.g != u.rhs && !U.Present(u)){
     printf("add ");
     std::cout << CalculateKey(u).first << "|" << CalculateKey(u).second << std::endl;
     /*u.id = */U.Insert(u,CalculateKey(u));
+    std:: cout << "ID = " << u.id << std::endl;
     grid[u.i][u.j] = u;
   }else if(u.g == u.rhs && U.Present(u)){
     printf("remove ");
     std::cout << u.g << " == " << u.rhs << std::endl;
+    std:: cout << "ID = " << u.id << std::endl;
     grid[u.i][u.j] = u;
     U.Remove(u);
   }
@@ -79,8 +82,8 @@ double Dstar::CalculateHeuristic(const state &to, const state &from) const{
 
 void Dstar::GetPredecessors(state &u, std::vector<state> &s){
   s.clear();
-  u.k.first = 0;
-  u.k.second = 0;
+  u.k.first = -1;
+  u.k.second = -1;
 
   // check every block around us
   //printf("before block\n");
@@ -239,6 +242,7 @@ void Dstar::ComputeShortestPath(){
     }
   }
 
+  U.Remove(*s_start);
   //MakePath();
 }
 
@@ -280,8 +284,16 @@ void Dstar::Main(){
   std::cout << "HELLO4" << std::endl;
   path.clear();
   path.push_back(*s_start);
+  printf("\n\n");
+  /*for(int i = 0; i < (int) grid.size(); i++){
+        for(int j = 0; j < (int) grid[0].size(); j++){
+            printf("%d:%d ",i,j);
+            std::cout << grid[i][j].k.first << "|" << grid[i][j].k.second << std::endl;
+        }
+    }*/
 
   while(*s_start != *s_goal){
+    printf("\n\n\n\n\n\n");
     //std::cout << "RETURN" << std::endl;
     if(s_start->rhs == DBL_MAX) return; // there is no path
 
@@ -294,7 +306,7 @@ void Dstar::Main(){
     big.first = DBL_MAX;
     big.second = DBL_MAX;
     s.k = big;
-    if(tmp1.size() == 0){
+    /*if(tmp1.size() == 0){
       printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
       std::cout << path[0].i << "&" << path[0].j << std::endl;
       path.pop_back();
@@ -305,7 +317,7 @@ void Dstar::Main(){
       std::cout <<" PATH SIZW :" << path.size() << std::endl;
       //if(path.size() == 0) ComputeShortestPath();
       //for(size_t i = 0; i < tmp1.size(); i++) if(s > tmp1[i]) s = tmp1[i];
-    }
+    }*/
     for(size_t i = 0; i < tmp1.size(); i++){
       if(s > tmp1[i]){
         s = tmp1[i];

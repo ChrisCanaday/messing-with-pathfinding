@@ -15,12 +15,12 @@ class PQ{
     void Print();
     state &Top();
     void Pop();
-    bool Present(state s);
+    bool Present(state &s);
     int GetSize();
 
 
-  private:
-    void PercolateDown(int left, int right);
+  //private:
+    void PercolateDown(int left, int right, state &s);
     void PercolateUp(state &s);
 
     int size;

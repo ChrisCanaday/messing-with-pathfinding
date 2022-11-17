@@ -66,7 +66,7 @@ void PQ::Update(state &s, priority k){
     if(heap[p] > s){
         PercolateUp(s);
     }else if((ileft < size-1 && iright < size-1) && (s > heap[ileft] || s > heap[iright])){
-        PercolateDown(ileft,iright);
+        PercolateDown(ileft,iright, s);
     }
 }
 
@@ -98,11 +98,11 @@ void PQ::Remove(state &s){
     size--;
 
     // percolate down to move things into correct place
-    PercolateDown(2*heap[index].id+1, 2*heap[index].id+2);
+    PercolateDown(2*heap[index].id+1, 2*heap[index].id+2, s);
 }
 
 // percolates down
-void PQ::PercolateDown(int left, int right){
+void PQ::PercolateDown(int left, int right, state &s){
     int p, lesser;
     state tmp;
 
@@ -123,6 +123,7 @@ void PQ::PercolateDown(int left, int right){
         // update id's
         heap[lesser].id = right;
         heap[p].id = p;
+        s.id = p;
 
         // calculate the next children
         left = 2*lesser+1;
@@ -140,8 +141,16 @@ void PQ::Pop(){
     Remove(Top());
 }
 
-bool PQ::Present(state s){
-    return (s.id != -1 && s.id < size);
+bool PQ::Present(state &s){
+    if(s.id != -1 && s.id < size){
+
+        std::cout << s.i << " &&&&&&& " << s.j << std::endl;
+        return true;
+        /*if(heap[s.id].i == s.i && heap[s.id].j == s.j){
+            return true;
+        }*/
+    }
+    return false;
 }
 
 // clears list and prints at same time (prints in order)
