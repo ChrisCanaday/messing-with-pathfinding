@@ -12,6 +12,7 @@ priority Dstar::CalculateKey(state &s){
 
 // psuedo code rn (literally made the psuedocode real holy shit)
 void Dstar::UpdateVertex(state &u){
+  std::cout << U.GetSize() << std::endl;
   if(u.g != u.rhs && U.Present(u)){
     U.Update(u,CalculateKey(u));
     grid[u.i][u.j] = u;
@@ -336,6 +337,7 @@ void Dstar::Main(){
     //std::cout << s_start->rhs << std::endl;
     //printf("start not goal\n");
     std::cout << "START NOT GOAL" << std::endl;
+    std::cout << U.GetSize() << std::endl;
 
     // move robot to s_start
     if(v == 1){
