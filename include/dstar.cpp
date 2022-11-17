@@ -14,13 +14,16 @@ priority Dstar::CalculateKey(state &s){
 void Dstar::UpdateVertex(state &u){
   if(u.g != u.rhs && U.Present(u)){
     U.Update(u,CalculateKey(u));
-    //grid[u.i][u.j] = u;
+    grid[u.i][u.j] = u;
   }else if(u.g != u.rhs && !U.Present(u)){
-    printf("add\n");
+    printf("add ");
+    std::cout << CalculateKey(u).first << "|" << CalculateKey(u).second << std::endl;
     /*u.id = */U.Insert(u,CalculateKey(u));
     grid[u.i][u.j] = u;
   }else if(u.g == u.rhs && U.Present(u)){
-    printf("remove\n");
+    printf("remove ");
+    std::cout << u.g << " == " << u.rhs << std::endl;
+    grid[u.i][u.j] = u;
     U.Remove(u);
   }
 }
@@ -95,14 +98,14 @@ void Dstar::GetSuccessors(state &u, std::vector<state> &s){
   
   if(IsOccupied(u.i,u.j)) return;
 
-  if(InBounds(u.i+1,u.j)) s.push_back(grid[u.i+1][u.j]);
-  if(InBounds(u.i+1,u.j+1)) s.push_back(grid[u.i+1][u.j+1]);
-  if(InBounds(u.i,u.j+1)) s.push_back(grid[u.i][u.j+1]);
-  if(InBounds(u.i-1,u.j+1)) s.push_back(grid[u.i-1][u.j+1]);
-  if(InBounds(u.i-1,u.j)) s.push_back(grid[u.i-1][u.j]);
-  if(InBounds(u.i-1,u.j-1)) s.push_back(grid[u.i-1][u.j-1]);
-  if(InBounds(u.i,u.j-1)) s.push_back(grid[u.i][u.j-1]);
-  if(InBounds(u.i+1,u.j-1)) s.push_back(grid[u.i+1][u.j-1]);
+  if(InBounds(u.i+1,u.j) && !IsOccupied(u.i+1,u.j)) s.push_back(grid[u.i+1][u.j]);
+  if(InBounds(u.i+1,u.j+1) && !IsOccupied(u.i+1,u.j+1)) s.push_back(grid[u.i+1][u.j+1]);
+  if(InBounds(u.i,u.j+1) && !IsOccupied(u.i,u.j+1)) s.push_back(grid[u.i][u.j+1]);
+  if(InBounds(u.i-1,u.j+1) && !IsOccupied(u.i-1,u.j+1)) s.push_back(grid[u.i-1][u.j+1]);
+  if(InBounds(u.i-1,u.j) && !IsOccupied(u.i-1,u.j)) s.push_back(grid[u.i-1][u.j]);
+  if(InBounds(u.i-1,u.j-1) && !IsOccupied(u.i-1,u.j-1)) s.push_back(grid[u.i-1][u.j-1]);
+  if(InBounds(u.i,u.j-1) && !IsOccupied(u.i,u.j-1)) s.push_back(grid[u.i][u.j-1]);
+  if(InBounds(u.i+1,u.j-1) && !IsOccupied(u.i+1,u.j-1)) s.push_back(grid[u.i+1][u.j-1]);
 }
 
 bool Dstar::InBounds(int i, int j){
@@ -196,7 +199,8 @@ void Dstar::ComputeShortestPath(){
       // for all s predecessors s.rhs = min(s.rhs,c(s,u) + u.g)
       // then UpdateVertex(s)
       GetPredecessors(u,s);
-      printf(".SIZE() %d\n", (int)s.size());
+      //printf(".SIZE() %d\n", (int)s.size());
+      std::cout << ".SIZE() " << s.size() << std::endl;
       //printf("3\n");
       for(i = 0; i < (int) s.size(); i++){
         //printf("4 %d\n",i);
@@ -285,20 +289,22 @@ void Dstar::Main(){
     // NOT UPDATING PATH CORRECTLY BOUNCES BACK AND FORTH
     // FIXED FOR NOW (CHANGED HOW GET PREDECESSORS WORKS)
     GetPredecessors(*s_start, tmp1);
+    std::cout << "TMP1.SIZE() " << tmp1.size() << std::endl;
     big.first = DBL_MAX;
     big.second = DBL_MAX;
     s.k = big;
-    /*if(tmp1.size() == 0){
+    if(tmp1.size() == 0){
       printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
       std::cout << path[0].i << "&" << path[0].j << std::endl;
       path.pop_back();
       s = path[path.size()-1];
+      std::cout << "SSSSSSS: " << s.i << "&" << s.j << std::endl;
       //std::cout << s.i << " & " << s.j << std::endl;
       path.pop_back();
       std::cout <<" PATH SIZW :" << path.size() << std::endl;
-      if(path.size() == 0) ComputeShortestPath();
+      //if(path.size() == 0) ComputeShortestPath();
       //for(size_t i = 0; i < tmp1.size(); i++) if(s > tmp1[i]) s = tmp1[i];
-    }*/
+    }
     for(size_t i = 0; i < tmp1.size(); i++){
       if(s > tmp1[i]){
         s = tmp1[i];
@@ -309,17 +315,17 @@ void Dstar::Main(){
     /*if(grid[s.i][s.j].k == neg){
       grid[s.i][s.j].k = CalculateKey(grid[s.i][s.j]);
     }*/
-    if(s_start == &grid[s.i][s.j]){
+    /*if(s_start == &grid[s.i][s.j]){
       while(!U.Empty()) U.Pop();
       U.Insert(*s_goal,CalculateKey(*s_goal));
       s_start = original_start;
       s_last = s_start;
       k_m = 0;
       ComputeShortestPath();
-    }
+    }*/
     std::cout << grid[0][1].k.first << "|" << grid[0][1].k.second << std::endl;
     s_start = &grid[s.i][s.j];
-    path.push_back(*s_start);
+    if(tmp1.size() != 0)path.push_back(*s_start);
 
     std::cout << s_start->i << "&" << s_start->j << " | " << s_goal->i << "&" << s_goal->j << std::endl;
     std::cout << s_start->k.first << "|" << s_start->k.second << std::endl;
@@ -333,9 +339,12 @@ void Dstar::Main(){
 
     // move robot to s_start
     if(v == 1){
-      GetSuccessors(grid[4][1],tmp);
+      //GetSuccessors(grid[4][1],tmp);
+      GetPredecessors(grid[4][1],tmp1);
       grid[4][1].cost = -1;
-      for(size_t i = 0; i < tmp.size(); i++) changed_edges.push_back(tmp[i]);
+      changed_edges.clear();
+      //for(size_t i = 0; i < tmp.size(); i++) changed_edges.push_back(tmp[i]);
+      for(size_t i = 0; i < tmp1.size(); i++) changed_edges.push_back(tmp1[i]);
       changed = true;
     }
 

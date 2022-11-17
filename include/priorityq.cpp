@@ -47,7 +47,7 @@ void PQ::PercolateUp(state &s){
 }
 
 // update s's k and make sure its position updates
-void PQ::Update(state s, priority k){
+void PQ::Update(state &s, priority k){
     int p, ileft, iright;
 
     if(s.k.first == k.first && s.k.second == k.second) return;
@@ -68,7 +68,6 @@ void PQ::Update(state s, priority k){
     }else if((ileft < size-1 && iright < size-1) && (s > heap[ileft] || s > heap[iright])){
         PercolateDown(ileft,iright);
     }
-
 }
 
 // return the smallest state (aka the top)
@@ -84,7 +83,7 @@ priority PQ::TopKey(){
 }
 
 // remove the state from the PQ
-void PQ::Remove(state s){
+void PQ::Remove(state &s){
     state tmp;
     int index = s.id;
 
@@ -159,5 +158,6 @@ void PQ::Print(){
 }
 
 int PQ::GetSize(){
+    std::cout << "HEAP SIZE " << heap.size() << std::endl;
     return size;
 }

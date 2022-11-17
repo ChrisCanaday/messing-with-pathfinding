@@ -8,9 +8,9 @@ class PQ{
   public:
     PQ();
     void Insert(state &s, std::pair<double,double> k);
-    void Update(state s, std::pair<double,double> k);
+    void Update(state &s, std::pair<double,double> k);
     priority TopKey();
-    void Remove(state s);
+    void Remove(state &s);
     bool Empty();
     void Print();
     state &Top();

@@ -12,9 +12,10 @@ state::state(){
 }
 
 bool state::operator > (const state &a) const{
-  if(k.first-0.001 > a.k.first) return true;
-  else if(k.first < a.k.first-0.001) return false;
-  return k.second > a.k.second;
+
+  /*f(k.first == a.k.first) return (k.second > a.k.second);
+  else return (k.first > a.k.first);*/
+  return (k > a.k);
 }
 
 bool state::operator != (const state &a) const{
