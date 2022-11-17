@@ -59,6 +59,7 @@ void Dstar::Initialize(){
 
   s_goal = &grid[4][2];
   s_start = &grid[1][0];
+  original_start = s_start;
   s_goal->rhs = 0;                                       // rhs(s_goal) = 0
   //CalculateKey(s_goal);                               // [h(s_start, s_goal); 0]
   U.Insert(*s_goal,CalculateKey(*s_goal));                // U.Insert(s_goal,[h(s_start, s_goal); 0])
@@ -74,8 +75,8 @@ double Dstar::CalculateHeuristic(const state &to, const state &from) const{
 
 void Dstar::GetPredecessors(state &u, std::vector<state> &s){
   s.clear();
-  u.k.first = -1;
-  u.k.second = -1;
+  u.k.first = 0;
+  u.k.second = 0;
 
   // check every block around us
   //printf("before block\n");
@@ -241,11 +242,14 @@ void Dstar::Main(){
   double c_old;
   std::vector<state> tmp,tmp1;
   double min = DBL_MAX;
-  priority big;\
+  priority big,neg;
   state s;
+  int v = 0;
+  neg.first = -1;
+  neg.second = -1;
 
-  s_last = s_start;
   Initialize();
+  s_last = s_start;
   printf("compute\n");
   ComputeShortestPath();
 
@@ -257,7 +261,6 @@ void Dstar::Main(){
 
   //printf("hello\n");
   std::cout << "HELLO" << std::endl;
-  grid[3][1].cost = -1;
   //printf("2\n");
   std::cout << "HELLO2" << std::endl;
   changed = true;
@@ -265,6 +268,7 @@ void Dstar::Main(){
   //printf("3\n");
 
   GetPredecessors(grid[3][1],tmp);
+  grid[3][1].cost = -1;
   for(size_t i = 0; i < tmp.size(); i++) changed_edges.push_back(tmp[i]);
   //changed_edges.push_back(grid[3][1]);
   //printf("before\n");
@@ -284,6 +288,17 @@ void Dstar::Main(){
     big.first = DBL_MAX;
     big.second = DBL_MAX;
     s.k = big;
+    /*if(tmp1.size() == 0){
+      printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
+      std::cout << path[0].i << "&" << path[0].j << std::endl;
+      path.pop_back();
+      s = path[path.size()-1];
+      //std::cout << s.i << " & " << s.j << std::endl;
+      path.pop_back();
+      std::cout <<" PATH SIZW :" << path.size() << std::endl;
+      if(path.size() == 0) ComputeShortestPath();
+      //for(size_t i = 0; i < tmp1.size(); i++) if(s > tmp1[i]) s = tmp1[i];
+    }*/
     for(size_t i = 0; i < tmp1.size(); i++){
       if(s > tmp1[i]){
         s = tmp1[i];
@@ -291,22 +306,46 @@ void Dstar::Main(){
     }
 
     //*s_start = s;
+    /*if(grid[s.i][s.j].k == neg){
+      grid[s.i][s.j].k = CalculateKey(grid[s.i][s.j]);
+    }*/
+    if(s_start == &grid[s.i][s.j]){
+      while(!U.Empty()) U.Pop();
+      U.Insert(*s_goal,CalculateKey(*s_goal));
+      s_start = original_start;
+      s_last = s_start;
+      k_m = 0;
+      ComputeShortestPath();
+    }
+    std::cout << grid[0][1].k.first << "|" << grid[0][1].k.second << std::endl;
     s_start = &grid[s.i][s.j];
     path.push_back(*s_start);
 
     std::cout << s_start->i << "&" << s_start->j << " | " << s_goal->i << "&" << s_goal->j << std::endl;
-    
+    std::cout << s_start->k.first << "|" << s_start->k.second << std::endl;
+    std::cout << "g: " << s_start->g << " rhs: " << s_start->rhs << std::endl;
+    std::cout << grid[0][0].k.first << "|" << grid[0][0].k.second << std::endl;
+
     //*s_start = path[1]; // set start to next thing in path
     //std::cout << s_start->rhs << std::endl;
     //printf("start not goal\n");
     std::cout << "START NOT GOAL" << std::endl;
 
     // move robot to s_start
+    if(v == 1){
+      GetSuccessors(grid[4][1],tmp);
+      grid[4][1].cost = -1;
+      for(size_t i = 0; i < tmp.size(); i++) changed_edges.push_back(tmp[i]);
+      changed = true;
+    }
 
     //std::cout << "CHANGE" << std::endl;
     if(changed){
       min = DBL_MAX;
+      v++;
       k_m = k_m + CalculateHeuristic(*s_last,*s_start);
+      std::cout << "HEURISTIC " << CalculateHeuristic(*s_last,*s_start) << std::endl;
+      std::cout << "K_M " << k_m << std::endl;
       s_last = s_start;
 
       for(size_t i = 0; i < changed_edges.size(); i++){
@@ -320,10 +359,14 @@ void Dstar::Main(){
             GetSuccessors(changed_edges[i],tmp1);
             for(size_t j = 0; j < tmp1.size(); j++){
               min = std::min(min,CalculateHeuristic(changed_edges[i],tmp1[j]) + tmp1[j].g);
+              //tmp1[i].k = CalculateKey(tmp1[i]);
             }
           }
         }
         std::cout << "UPDATE VERTEX" << std::endl;
+        std::cout << changed_edges[i].i << " & " << changed_edges[i].j << std::endl;
+        std::cout << changed_edges[i].k.first << "|" << changed_edges[i].k.second << std::endl;
+        std::cout << "k_m: " << k_m << std::endl;
         UpdateVertex(changed_edges[i]);
       }
       changed_edges.clear();

@@ -21,7 +21,7 @@ class Dstar{
     //void SetStart();
     //void SetEnd();
 
-    state *s_start, *s_goal, *s_last;
+    state *s_start, *s_goal, *s_last, *original_start;
     double k_m;
     bool changed;
 
