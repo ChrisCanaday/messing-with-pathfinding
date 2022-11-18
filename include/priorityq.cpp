@@ -89,6 +89,7 @@ void PQ::Remove(state &s){
 
     if(size == 0) return;
     if(s.id == -1) return;
+    if(!Present(s)) return;
 
     // move the last item in the list to the root
     heap[index] = heap[size-1];
@@ -143,12 +144,9 @@ void PQ::Pop(){
 
 bool PQ::Present(state &s){
     if(s.id != -1 && s.id < size){
-
-        std::cout << s.i << " &&&&&&& " << s.j << std::endl;
-        return true;
-        /*if(heap[s.id].i == s.i && heap[s.id].j == s.j){
+        if(heap[s.id].i == s.i && heap[s.id].j == s.j){
             return true;
-        }*/
+        }
     }
     return false;
 }

@@ -53,6 +53,30 @@ int main(){
         printf("%d:%d ",dstar.U.heap[i].i,dstar.U.heap[i].j);
         std::cout << dstar.U.heap[i].k.first << "|" << dstar.U.heap[i].k.second << " rhs: " << dstar.U.heap[i].rhs << " g " << dstar.U.heap[i].g << std::endl;
     }
+
+    /*PQ U;
+    //state s;
+
+    for(int i = 0; i < 10; i++){
+        state s;
+
+        s.k.first = i%2;
+        s.k.second = i;
+        s.i = i*2;
+        s.j = i;
+        U.Insert(s,s.k);
+        printf("s.id: %d\n",s.id);
+    }
+
+    state u;
+    u.k.first = 100;
+    u.k.second = 100;
+    u.id = 5;
+    u.i = 98;
+    u.j = 5;
+    U.GetSize();
+    U.Remove(u);
+    U.GetSize();*/
     
     return 0;
 }
