@@ -7,14 +7,14 @@
 
 class Dstar{
   public:
-    priority CalculateKey(state &s);
+    priority CalculateKey(state *s);
     void Initialize();
-    void UpdateVertex(state &u);
+    void UpdateVertex(state *u);
     void ComputeShortestPath();
     void Main();
-    double CalculateHeuristic(const state &to, const state &from) const;
-    void GetPredecessors(state &u, std::vector<state> &s);
-    void GetSuccessors(state &u, std::vector<state> &s);
+    double CalculateHeuristic(const state *to, const state *from) const;
+    void GetPredecessors(state *u, std::vector<state*> &s);
+    void GetSuccessors(state *u, std::vector<state*> &s);
     bool IsOccupied(int i, int j);
     void MakePath();
     bool InBounds(int i, int j);
@@ -27,10 +27,10 @@ class Dstar{
 
     PQ U;
 
-    std::vector<state> all_states;
-    std::vector<std::vector<state> > grid;
-    std::vector<state> path;
-    std::vector<state> changed_edges;
+    //std::vector<state> all_states;
+    std::vector<std::vector<state *> > grid;
+    std::vector<state *> path;
+    std::vector<state *> changed_edges;
 };
 
 #endif

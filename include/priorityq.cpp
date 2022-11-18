@@ -9,15 +9,15 @@ PQ::PQ(){
 
 // insert state s with priority k
 // set k in the s then insert most likely
-void PQ::Insert(state &s, priority k){
+void PQ::Insert(state *s, priority k){
     int i;
 
     // get index
     i = size;
 
     // set priority and the id
-    s.k = k;
-    s.id = i;
+    s->k = k;
+    s->id = i;
 
     heap.push_back(s);
     size++;
@@ -26,20 +26,20 @@ void PQ::Insert(state &s, priority k){
     PercolateUp(s);
 }
 
-void PQ::PercolateUp(state &s){
-    int i = s.id, p;
+void PQ::PercolateUp(state *s){
+    int i = s->id, p;
 
     //printf("i: %d\n",i);
     while(i > 0){
         p = (i-1)/2;
 
-        if(heap[p] > s){
+        if(heap[p]->k > s->k){
             heap[i] = heap[p];
             heap[p] = s;
-            heap[i].id = i;
+            heap[i]->id = i;
             i = p;
-            s.id = p;
-            heap[p].id = p;
+            //s->id = p;
+            heap[p]->id = p;
         }else{
             return;
         }
@@ -47,23 +47,27 @@ void PQ::PercolateUp(state &s){
 }
 
 // update s's k and make sure its position updates
-void PQ::Update(state &s, priority k){
+void PQ::Update(state *s, priority k){
     int p, ileft, iright;
 
-    if(s.k.first == k.first && s.k.second == k.second) return;
+    //if(s->k.first == k.first && s->k.second == k.second) return;
+    if(s->k == k){
+        printf("SAME\n");
+        return;
+    }
 
     // update s's values
-    s.k = k;
-    heap[s.id] = s;
+    s->k = k;
+    heap[s->id] = s;
 
     // get parent and children
-    p = (s.id-1)/2;
-    ileft = s.id*2+1;
-    iright = s.id*2+2;
+    p = (s->id-1)/2;
+    ileft = s->id*2+1;
+    iright = s->id*2+2;
 
     // if smaller then parent then percolate up
     // if bigger than children then percolate down
-    if(heap[p] > s){
+    if(heap[p]->k > s->k){
         PercolateUp(s);
     }else if((ileft < size-1 && iright < size-1) && (s > heap[ileft] || s > heap[iright])){
         PercolateDown(ileft,iright, s);
@@ -71,7 +75,7 @@ void PQ::Update(state &s, priority k){
 }
 
 // return the smallest state (aka the top)
-state &PQ::Top(){
+state *PQ::Top(){
     return heap[0];
 }
 
@@ -79,33 +83,33 @@ state &PQ::Top(){
 // returns [DBL_MAX,DBL_MAX] if PQ is empty
 priority PQ::TopKey(){
     if(size == 0) return inf;
-    return Top().k;
+    return Top()->k;
 }
 
 // remove the state from the PQ
-void PQ::Remove(state &s){
+void PQ::Remove(state *s){
     state tmp;
-    int index = s.id;
+    int index = s->id;
 
     if(size == 0) return;
-    if(s.id == -1) return;
+    if(s->id == -1) return;
     if(!Present(s)) return;
 
     // move the last item in the list to the root
     heap[index] = heap[size-1];
-    heap[index].id = index;
-    s.id = -1;
+    heap[index]->id = index;
+    s->id = -1;
     heap.pop_back();
     size--;
 
     // percolate down to move things into correct place
-    PercolateDown(2*heap[index].id+1, 2*heap[index].id+2, s);
+    PercolateDown(2*heap[index]->id+1, 2*heap[index]->id+2, s);
 }
 
 // percolates down
-void PQ::PercolateDown(int left, int right, state &s){
+void PQ::PercolateDown(int left, int right, state *s){
     int p, lesser;
-    state tmp;
+    state *tmp;
 
     // go through all children
     while(left < size && right < size){
@@ -114,7 +118,7 @@ void PQ::PercolateDown(int left, int right, state &s){
         p = (left-1)/2;
 
         // choose the lesser one
-        lesser = (heap[left] > heap[right]) ? right : left;
+        lesser = (heap[left]->k > heap[right]->k) ? right : left;
 
         // swap the lesser one with the parent
         tmp = heap[p];
@@ -122,9 +126,9 @@ void PQ::PercolateDown(int left, int right, state &s){
         heap[lesser] = tmp;
 
         // update id's
-        heap[lesser].id = right;
-        heap[p].id = p;
-        s.id = p;
+        heap[lesser]->id = right;
+        heap[p]->id = p;
+        s->id = p;
 
         // calculate the next children
         left = 2*lesser+1;
@@ -142,24 +146,32 @@ void PQ::Pop(){
     Remove(Top());
 }
 
-bool PQ::Present(state &s){
-    if(s.id != -1 && s.id < size){
-        if(heap[s.id].i == s.i && heap[s.id].j == s.j){
+bool PQ::Present(state *s){
+    for(size_t i = 0; i < heap.size(); i++){
+        if(*heap[i] == *s){
+            if((int) i != s->id) s->id = i;
+
             return true;
         }
     }
+
+    /*if(s->id != -1 && s->id < size){
+        if(heap[s->id]->i == s->i && heap[s->id]->j == s->j){
+            return true;
+        }
+    }*/
     return false;
 }
 
 // clears list and prints at same time (prints in order)
 void PQ::Print(){
     int i, num = size;
-    state tmp;
+    state *tmp;
 
     for(i = 0; i < num; i++){
         tmp = Top();
 
-        std::cout << tmp.k.first << "|" << tmp.k.second << std::endl;
+        std::cout << tmp->k.first << "|" << tmp->k.second << std::endl;
         Remove(tmp);
     }
 }

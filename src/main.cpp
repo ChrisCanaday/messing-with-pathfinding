@@ -3,7 +3,7 @@
 int main(){
     Dstar dstar;
     int i,j;
-    state u, min2;
+    state *u, min2;
     std::vector<state> s;
     std::vector<state> path;
     priority min;
@@ -17,17 +17,17 @@ int main(){
     for(i = 0; i < (int) dstar.grid.size(); i++){
         for(j = 0; j < (int) dstar.grid[0].size(); j++){
             printf("%d:%d ",i,j);
-            std::cout << dstar.grid[i][j].k.first << "|" << dstar.grid[i][j].k.second << std::endl;
+            std::cout << dstar.grid[i][j]->k.first << "|" << dstar.grid[i][j]->k.second << std::endl;
         }
     }
     printf("\nALLSTATES\n");
 
-    for(i = 0; i < (int) dstar.all_states.size(); i++){
+    /*for(i = 0; i < (int) dstar.all_states.size(); i++){
         printf("%d:%d ",dstar.all_states[i].i,dstar.all_states[i].j);
         std::cout << dstar.all_states[i].k.first << "|" << dstar.all_states[i].k.second << std::endl;
-    }
+    }*/
 
-    u = *dstar.s_start;
+    u = dstar.s_start;
     /*path.push_back(u);
     while(u != *dstar.s_goal){
         dstar.GetPredecessors(u,s);
@@ -44,15 +44,24 @@ int main(){
     printf("path.size() %ld\n",dstar.path.size());
     //std::cout << "path.size() " << dstar.path.size()
     for(i = 0; i < (int) dstar.path.size(); i++){
-        printf("%d:%d ",dstar.path[i].i,dstar.path[i].j);
-        std::cout << dstar.path[i].k.first << "|" << dstar.path[i].k.second << " rhs: " << dstar.path[i].rhs << " g " << dstar.path[i].g << std::endl;
+        printf("%d:%d ",dstar.path[i]->i,dstar.path[i]->j);
+        std::cout << dstar.path[i]->k.first << "|" << dstar.path[i]->k.second << " rhs: " << dstar.path[i]->rhs << " g " << dstar.path[i]->g << std::endl;
     }
     
     printf("\nHEAP\n");
     for(i = 0; i < dstar.U.heap.size(); i++){
-        printf("%d:%d ",dstar.U.heap[i].i,dstar.U.heap[i].j);
-        std::cout << dstar.U.heap[i].k.first << "|" << dstar.U.heap[i].k.second << " rhs: " << dstar.U.heap[i].rhs << " g " << dstar.U.heap[i].g << std::endl;
+        printf("%d:%d ",dstar.U.heap[i]->i,dstar.U.heap[i]->j);
+        std::cout << dstar.U.heap[i]->k.first << "|" << dstar.U.heap[i]->k.second << " rhs: " << dstar.U.heap[i]->rhs << " g " << dstar.U.heap[i]->g << std::endl;
     }
+    /*while(!dstar.U.Empty()){
+        std::cout << dstar.U.GetSize() << std::endl;
+        u = dstar.U.Top();
+
+        printf("%d:%d ",u->i,u->j);
+        std::cout << u->k.first << "|" << u->k.second << " rhs: " << u->rhs << " g " << u->g << std::endl;
+        //dstar.U.Pop();
+        dstar.U.Remove(u);
+    }*/
 
     /*PQ U;
     //state s;
