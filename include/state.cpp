@@ -18,6 +18,10 @@ bool state::operator > (const state &a) const{
   return (k > a.k);
 }
 
+bool state::operator < (const state &a) const{
+  return (k < a.k);
+}
+
 bool state::operator != (const state &a) const{
   return (i != a.i || j != a.j);
 }

@@ -24,6 +24,7 @@ struct state{
 
   // comparison for priority queue
   bool operator > (const state &a) const;
+  bool operator < (const state &a) const;
 
   // comparison for main D* Lite driver
   bool operator != (const state &a) const;
