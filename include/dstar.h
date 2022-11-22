@@ -30,7 +30,7 @@ public:
   PQ U;
 
   // std::vector<state> all_states;
-  std::vector<std::vector<state *>> grid;
+  std::vector<std::vector<state *> > grid;
   std::vector<state*> path;
   std::vector<state*> changed_edges;
 };

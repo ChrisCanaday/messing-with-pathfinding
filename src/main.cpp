@@ -1,4 +1,4 @@
-#include "../include/dstar.h"
+#include "../include/dstars.h"
 
 int main(){
     Dstar dstar;

@@ -1,14 +1,14 @@
 #include "state.h"
 
 state::state(){
-  g = DBL_MAX;
-  rhs = DBL_MAX;
+  g = inf;
+  rhs = inf;
   h = 0.0;
   i = -1;
   j = -1;
   id = -1;
-  k.first = DBL_MAX;
-  k.second = DBL_MAX;
+  k.first = inf;
+  k.second = inf;
 }
 
 bool state::operator > (const state &a) const{

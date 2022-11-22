@@ -303,10 +303,13 @@ void Dstar::Main(){
   GetSuccessors(grid[3][1],tmp);
   grid[3][1]->cost = -1;
   for(size_t i = 0; i < tmp.size(); i++) changed_edges.push_back(tmp[i]);*/
-  /*changed = true;
+  changed = true;
   GetSuccessors(grid[4][1],tmp);
   grid[4][1]->cost = -1;
-  for(size_t i = 0; i < tmp.size(); i++) changed_edges.push_back(std::make_pair(grid[4][1],tmp[i]));*/
+  for(size_t i = 0; i < tmp.size(); i++){
+    //if(tmp[i] != s_goal) tmp[i]->g = DBL_MAX;
+    changed_edges.push_back(tmp[i]);
+  }
   
   path.clear();
   path.push_back(s_start);
@@ -430,6 +433,17 @@ void Dstar::Main(){
       //std::cout << "HEURISTIC " << CalculateHeuristic(*s_last,*s_start) << std::endl;
       //std::cout << "K_M " << k_m << std::endl;
       s_last = s_start;
+      for(size_t i = 0; i < changed_edges.size(); i++){
+        GetSuccessors(changed_edges[i],tmp);
+
+        changed_edges[i]->g = DBL_MAX;
+        for(size_t j = 0; j < tmp.size(); j++){
+          changed_edges[i]->g = std::min(changed_edges[i]->g,CalculateHeuristic(tmp[j],changed_edges[i]));
+        }
+        //changed_edges
+        UpdateVertex(changed_edges[i]);
+      }
+      ComputeShortestPath();
 
       /*for(size_t i = 0; i < changed_edges.size(); i++){
         GetPredecessors(changed_edges[i],tmp);

@@ -16,9 +16,10 @@ public:
   bool Empty();
   void Print();
   state *Top();
-  void Pop();
+  state *Pop();
   bool Present(state *s);
   int GetSize();
+  void ReturnAllEntries(std::vector<state*> &v);
 
 private:
   std::multiset<state *>::iterator it;

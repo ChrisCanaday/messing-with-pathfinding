@@ -5,6 +5,9 @@
 #include <float.h>
 
 typedef std::pair<double,double> priority;  // priority of the PQ
+#define inf 999999999.0;
+//double infinity 999999999;
+
 
 struct state{
   double g;                   // min true cost from start to cell

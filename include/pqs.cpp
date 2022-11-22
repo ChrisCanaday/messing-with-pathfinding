@@ -46,10 +46,13 @@ state *PQ::Top()
   return (*it);
 }
 
-void PQ::Pop()
+state *PQ::Pop()
 {
+  state *ans;
   it = storage.begin();
+  ans = Top();
   storage.erase(*it);
+  return ans;
 }
 
 bool PQ::Present(state *s)
@@ -70,4 +73,11 @@ void PQ::Print()
 int PQ::GetSize()
 {
   return storage.size();
+}
+
+void PQ::ReturnAllEntries(std::vector<state*> &v){
+  v.clear();
+  for(it = storage.begin(); it != storage.end(); it++){
+    v.push_back(*it);
+  }
 }
