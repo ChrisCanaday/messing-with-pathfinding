@@ -58,7 +58,7 @@ void Dstar::Initialize(){
     tmp.clear();
     for(int j = 0; j < 3; j++){
       s = new state;
-      if((i == 2 || i == 1 /*|| i == 3 || i == 4*/) && j == 1){
+      if((i == 2 || i == 1 || i == 3 /*|| i == 4*/) && j == 1){
         s->cost = -1;
       }else{
         s->cost = 1;
@@ -82,6 +82,7 @@ void Dstar::Initialize(){
 
 // returns euclidean distance between node from and to
 double Dstar::CalculateHeuristic(const state *to, const state *from) const{
+  if(from->cost == -1 || to->cost == -1) return 600000;
   int di = abs(from->i - to->i);
   int dj = abs(from->j - to->j);
 
@@ -169,9 +170,12 @@ void Dstar::ComputeShortestPath(){
 
   //printf("before loop\n");
   std::cout << "SIZE: " << U.GetSize() << std::endl;
+  U.Print();
+  printf("\n");
   u = U.Top();
   std::cout << "i: " << u->i << " j: " << u->j << std::endl;
   std::cout << u->k.first << "|" << u->k.second << std::endl;
+  //U.Print();
   k_old = CalculateKey(s_start);
   std::cout << k_old.first << "|" << k_old.second << std::endl;
 
@@ -241,7 +245,7 @@ void Dstar::ComputeShortestPath(){
     }
   }
 
-  //s_start->g = s_start->rhs;
+  s_start->g = s_start->rhs;
   U.Remove(s_start);
   //MakePath();
 }
@@ -261,14 +265,14 @@ void Dstar::Main(){
   s_last = s_start;
   ComputeShortestPath();
 
-  changed = true;
+  /*changed = true;
   GetSuccessors(grid[3][1],tmp);
   grid[3][1]->cost = -1;
-  for(size_t i = 0; i < tmp.size(); i++) changed_edges.push_back(tmp[i]);
-  /*changed = true;
-  GetSuccessors(grid[4][1],tmp);
-  grid[4][1].cost = -1;
   for(size_t i = 0; i < tmp.size(); i++) changed_edges.push_back(tmp[i]);*/
+  changed = true;
+  GetSuccessors(grid[4][1],tmp);
+  grid[4][1]->cost = -1;
+  for(size_t i = 0; i < tmp.size(); i++) changed_edges.push_back(tmp[i]);
   
   path.clear();
   path.push_back(s_start);
@@ -382,32 +386,6 @@ void Dstar::Main(){
       //std::cout << "HEURISTIC " << CalculateHeuristic(*s_last,*s_start) << std::endl;
       //std::cout << "K_M " << k_m << std::endl;
       s_last = s_start;
-
-      /*for(size_t i = 0; i < changed_edges.size(); i++){
-        GetSuccessors(changed_edges[i],tmp);
-        changed_edges[i]->cost = -1;
-
-        for(size_t j = 0; j < tmp.size(); j++){
-          c_old = tmp[i]->h;
-          tmp[i]->h = CalculateHeuristic(changed_edges[i],tmp[i]);
-          //tmp[i]->h = CalculateHeuristic(tmp[j],changed_edges[i]);
-          //tmp[i]->h = CalculateKey(tmp[i]);
-          if(c_old > tmp[i]->h){
-            if(*changed_edges[i] != *s_goal) changed_edges[i]->rhs = std::min(changed_edges[i]->rhs, CalculateHeuristic(changed_edges[i],tmp[i]) + tmp[i]->g); 
-          }else if(changed_edges[i]->rhs == c_old + tmp[i]->g){
-            min = DBL_MAX;
-            GetSuccessors(tmp[i],tmp1);
-
-            for(size_t k = 0; k < tmp1.size(); k++){
-              min = std::min(min,CalculateHeuristic(tmp[i],tmp1[i]) + tmp1[i]->g);
-            }
-            tmp[i]->rhs = min;
-          }
-          UpdateVertex(tmp[i]);
-        }
-      }
-      ComputeShortestPath();
-      changed = false;*/
 
       for(size_t i = 0; i < changed_edges.size(); i++){
         c_old = changed_edges[i]->h;

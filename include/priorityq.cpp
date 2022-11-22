@@ -168,12 +168,10 @@ void PQ::Print(){
     int i, num = size;
     state *tmp;
 
-    for(i = 0; i < num; i++){
-        tmp = Top();
-
-        std::cout << tmp->k.first << "|" << tmp->k.second << std::endl;
-        Remove(tmp);
-    }
+    printf("\n\n\nPQ Heap\n");
+    for(i = 0; i < size; i++){
+        std::cout << heap[i]->i << ":" << heap[i]->j << std::endl;
+     }
 }
 
 int PQ::GetSize(){
