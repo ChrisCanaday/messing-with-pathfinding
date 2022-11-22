@@ -147,7 +147,10 @@ void Dstar::Main(){
     }
 };
 double Dstar::CalculateHeuristic(const state *to, const state *from) const{
+  double di = abs(to->i - from->i);
+  double dj = abs(to->j - from->j);
 
+  return sqrt(di*di+dj*dj);
 };
 void Dstar::GetPredecessors(state *u, std::vector<state *> &s){
   s.clear();
