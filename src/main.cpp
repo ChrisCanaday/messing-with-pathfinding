@@ -10,9 +10,48 @@ int main(){
     min.first = DBL_MAX;
     min.second = DBL_MAX;
     min2.k = min;
+    /*PQ U;
+    std::vector<state*> v;
+    state *s;
+    priority k;
+    int i;*/
 
+    /*for(i = 0; i < 10; i++){
+        s = new state;
+        s->g = 25*i;
+        s->rhs = 50*i;
+        s->i = i;
+        s->j = i;
+
+        //s->k.first = i/2;
+        //s->k.second = i;
+        k.first = i/2;
+        k.second = i;
+
+        U.Insert(s,k);
+        v.push_back(s);
+    }*/
+
+    //U.Print();
+
+    //k.first = 4;
+    //k.second = 20;
+    //U.Update(v[3],k);
+
+    //std::cout << std::endl << std::endl; 
+
+    //U.Print();
+    //v[2]->k.first = .5;
+    //U.Remove(v[2]);
+    //v[0]->k.second = 45;
+    //v[0]->k.first = 213;
+    //U.Remove(v[0]);
+    //std::cout << std::endl << std::endl;
+    //U.Print();
     //dstar.Initialize();
     dstar.Main();
+
+    
 
     for(i = 0; i < (int) dstar.grid.size(); i++){
         for(j = 0; j < (int) dstar.grid[0].size(); j++){
@@ -27,7 +66,7 @@ int main(){
         std::cout << dstar.all_states[i].k.first << "|" << dstar.all_states[i].k.second << std::endl;
     }*/
 
-    u = dstar.s_start;
+    //u = dstar.s_start;
     /*path.push_back(u);
     while(u != *dstar.s_goal){
         dstar.GetPredecessors(u,s);
@@ -49,10 +88,11 @@ int main(){
     }
     
     printf("\nHEAP\n");
-    for(i = 0; i < dstar.U.heap.size(); i++){
+    dstar.U.Print();
+    /*for(i = 0; i < dstar.U.heap.size(); i++){
         printf("%d:%d ",dstar.U.heap[i]->i,dstar.U.heap[i]->j);
         std::cout << dstar.U.heap[i]->k.first << "|" << dstar.U.heap[i]->k.second << " rhs: " << dstar.U.heap[i]->rhs << " g " << dstar.U.heap[i]->g << std::endl;
-    }
+    }*/
     /*while(!dstar.U.Empty()){
         std::cout << dstar.U.GetSize() << std::endl;
         u = dstar.U.Top();

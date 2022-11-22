@@ -30,6 +30,19 @@ struct state{
   bool operator != (const state &a) const;
 
   bool operator == (const state &a) const;
+
+  bool operator () (state const* s1, state const* s2){
+    return (s1->k < s2->k);
+  }
+};
+
+struct comp{
+  bool operator()(const state* s1, const state* s2) const;
+  //bool operator==(const state* s1, const state* s2) const;
+};
+
+struct comppos{
+  bool operator()(const state* s1, const state* s2) const;
 };
 
 #endif
