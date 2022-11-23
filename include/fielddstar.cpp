@@ -1,7 +1,7 @@
-#include "dstar.h"
+#include "fielddstar.h"
 
 /* Calculates the key (priority) of the state s */
-priority Dstar::CalculateKey(state *s)
+priority FDstar::CalculateKey(state *s)
 {
   priority ans;
 
@@ -12,7 +12,7 @@ priority Dstar::CalculateKey(state *s)
 };
 
 /* Initializes the Dstar class*/
-void Dstar::Initialize()
+void FDstar::Initialize()
 {
   std::vector<state *> tmp;
   state *s;
@@ -55,17 +55,19 @@ void Dstar::Initialize()
 };
 
 /* Updates state u in the PQ */
-void Dstar::UpdateVertex(state *u)
+void FDstar::UpdateVertex(state *u)
 {
-  std::vector<state *> tmp;
+  //std::vector<state *> tmp;
+  std::vector<std::pair<state*,state*> > tmp;
   double tmprhs = inf;
 
   // if not goal set rhs
   if (*u != *s_goal){
-    GetSuccessors(u, tmp);
+    //GetSuccessors(u, tmp);
+    GetConnbrs(u,tmp);
 
     for (size_t i = 0; i < tmp.size(); i++){
-      tmprhs = std::min(tmprhs, CalculateHeuristic(tmp[i], u) + tmp[i]->g);
+      tmprhs = std::min(tmprhs, ComputeCost(u,tmp[i].first,tmp[i].second));
     }
     u->rhs = tmprhs;
   }
@@ -78,7 +80,7 @@ void Dstar::UpdateVertex(state *u)
 };
 
 /* LPA* */
-void Dstar::ComputeShortestPath()
+void FDstar::ComputeShortestPath()
 {
   state *u;
   std::vector<state *> tmp;
@@ -110,7 +112,7 @@ void Dstar::ComputeShortestPath()
 };
 
 /* Main D* Lite Driver */
-void Dstar::Main()
+void FDstar::Main()
 {
   std::vector<state *> tmp;
   state *tmpstate;
@@ -179,8 +181,9 @@ void Dstar::Main()
 };
 
 /* Calculates the cost from one node to another. Uses Euclidean Distance */
-double Dstar::CalculateHeuristic(const state *to, const state *from) const
+double FDstar::CalculateHeuristic(const state *to, const state *from) const
 {
+  if(to->cost < 0 || from->cost < 0) return inf;
   double di = abs(to->i - from->i);
   double dj = abs(to->j - from->j);
 
@@ -188,7 +191,7 @@ double Dstar::CalculateHeuristic(const state *to, const state *from) const
 };
 
 /* Returns all adjacent nodes that are legal */
-void Dstar::GetPredecessors(const state *u, std::vector<state *> &s)
+void FDstar::GetPredecessors(const state *u, std::vector<state *> &s)
 {
   s.clear();
 
@@ -204,7 +207,7 @@ void Dstar::GetPredecessors(const state *u, std::vector<state *> &s)
 };
 
 /* Returns all adjacent nodes that are legal */
-void Dstar::GetSuccessors(const state *u, std::vector<state *> &s)
+void FDstar::GetSuccessors(const state *u, std::vector<state *> &s)
 {
   s.clear();
 
@@ -220,7 +223,7 @@ void Dstar::GetSuccessors(const state *u, std::vector<state *> &s)
 };
 
 /* Returns if the cell at i,j is untraversable */
-bool Dstar::IsOccupied(const int i, const int j) const
+bool FDstar::IsOccupied(const int i, const int j) const
 {
   // check to see if you are outside of the grid
   if (i >= (int)grid.size() || i < 0) return true;
@@ -229,3 +232,74 @@ bool Dstar::IsOccupied(const int i, const int j) const
   // return if the node is a wall
   return (grid[i][j]->cost < 0);
 };
+
+double FDstar::ComputeCost(state *s, state *s_a, state *s_b){
+    state *s1, *s2;
+    double c, b, v_s, f, x, y, comp;
+    comp = inf;
+
+    if(CalculateHeuristic(s_a,s) != 1){
+        s1 = s_b;
+        s2 = s_a;
+    }else{
+        s1 = s_a;
+        s2 = s_b;
+    }
+
+    c = CalculateHeuristic(s,s1) + CalculateHeuristic(s1,s2);
+    b = CalculateHeuristic(s,s1);
+
+    if(std::min(c,b) == comp){
+        v_s = std::min(c,b) + s1->g;
+    }else{
+        f = s1->g - s2->g;
+
+        if(f <= b){
+            if(c <- f){
+                v_s = c*sqrt(2) + s2->g;
+            }else{
+                y = std::min(f/(sqrt(c*c-f*f)),(double) 1);
+                v_s = c*sqrt(1+y*y) + f*(1-y) + s2->g;
+            }
+        }else{
+            if(c <= b){
+                v_s = c*sqrt(2) + s2->g;
+            }else{
+                x = 1-std::min(b/(sqrt(c*c-b*b)),(double) 1);
+                v_s = c*sqrt(1+(1-x)*(1-x)) + b*x + s2->g;
+            }
+        }
+    }
+
+    return v_s;
+}
+
+void FDstar::GetConnbrs(state *s, std::vector<std::pair<state*,state*> > &v){
+    std::pair<state*,state*> tmp;
+    v.clear();
+
+    tmp.first = grid[s->i+1][s->j-1];
+    tmp.second = grid[s->i+1][s->j];
+    v.push_back(tmp);
+    tmp.first = tmp.second;
+    tmp.second = grid[s->i+1][s->j+1];
+    v.push_back(tmp);
+    tmp.first = tmp.second;
+    tmp.second = grid[s->i][s->j+1];
+    v.push_back(tmp);
+    tmp.first = tmp.second;
+    tmp.second = grid[s->i-1][s->j+1];
+    v.push_back(tmp);
+    tmp.first = tmp.second;
+    tmp.second = grid[s->i-1][s->j];
+    v.push_back(tmp);
+    tmp.first = tmp.second;
+    tmp.second = grid[s->i-1][s->j-1];
+    v.push_back(tmp);
+    tmp.first = tmp.second;
+    tmp.second = grid[s->i][s->j-1];
+    v.push_back(tmp);
+    tmp.first = tmp.second;
+    tmp.second = grid[s->i+1][s->j-1];
+    v.push_back(tmp);
+}

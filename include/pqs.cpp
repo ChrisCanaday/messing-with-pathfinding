@@ -1,23 +1,14 @@
 #include "pqs.h"
 
-PQ::PQ(){
-
-}
-
 void PQ::Insert(state *s, std::pair<double, double> k)
 {
   s->k = k;
   storage.insert(s);
-  present.insert(s);
 }
 
 void PQ::Update(state *s, std::pair<double, double> k)
 {
-  it = storage.find(s);
-  if (it == storage.end()){
-    std::cout << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAA" << std::endl;
-    return;
-  }
+  if (storage.find(s) == storage.end()) return;
 
   storage.erase(s);
   s->k = k;
@@ -26,8 +17,7 @@ void PQ::Update(state *s, std::pair<double, double> k)
 
 priority PQ::TopKey()
 {
-  it = storage.begin();
-  return (*it)->k;
+  return (*storage.begin())->k;
 }
 
 void PQ::Remove(state *s)
@@ -42,23 +32,20 @@ bool PQ::Empty()
 
 state *PQ::Top()
 {
-  it = storage.begin();
-  return (*it);
+  return (*storage.begin());
 }
 
 state *PQ::Pop()
 {
-  state *ans;
-  it = storage.begin();
-  ans = Top();
-  storage.erase(*it);
+  state *ans = Top();
+
+  storage.erase(*storage.begin());
   return ans;
 }
 
 bool PQ::Present(state *s)
 {
-  it = storage.find(s);
-  return (it != storage.end());
+  return (storage.find(s) != storage.end());
 }
 
 void PQ::Print()
@@ -75,9 +62,14 @@ int PQ::GetSize()
   return storage.size();
 }
 
-void PQ::ReturnAllEntries(std::vector<state*> &v){
+void PQ::GetAllNodes(std::vector<state*> &v){
   v.clear();
+
   for(it = storage.begin(); it != storage.end(); it++){
     v.push_back(*it);
   }
+}
+
+void PQ::Clear(){
+  storage.clear();
 }

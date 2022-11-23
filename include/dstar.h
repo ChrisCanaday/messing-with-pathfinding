@@ -14,22 +14,17 @@ public:
   void ComputeShortestPath();
   void Main();
   double CalculateHeuristic(const state *to, const state *from) const;
-  void GetPredecessors(state *u, std::vector<state *> &s);
-  void GetSuccessors(state *u, std::vector<state *> &s);
-  bool IsOccupied(int i, int j);
-  void MakePath();
-  bool InBounds(int i, int j);
-  double GetCost(state *s1, state* s2);
+  void GetPredecessors(const state *u, std::vector<state *> &s);
+  void GetSuccessors(const state *u, std::vector<state *> &s);
+  bool IsOccupied(const int i, const int j) const;
   // void SetStart();
   // void SetEnd();
 
-  state *s_start, *s_goal, *s_last, *original_start;
-  double k_m;
+//private:
+  state *s_start, *s_goal, *s_last;
   bool changed;
 
   PQ U;
-
-  // std::vector<state> all_states;
   std::vector<std::vector<state *> > grid;
   std::vector<state*> path;
   std::vector<state*> changed_edges;

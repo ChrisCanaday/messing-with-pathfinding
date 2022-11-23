@@ -8,23 +8,22 @@
 class PQ
 {
 public:
-  PQ();
-  void Insert(state *s, std::pair<double, double> k);
-  void Update(state *s, std::pair<double, double> k);
-  priority TopKey();
-  void Remove(state *s);
-  bool Empty();
-  void Print();
-  state *Top();
-  state *Pop();
-  bool Present(state *s);
-  int GetSize();
-  void ReturnAllEntries(std::vector<state*> &v);
+  void Insert(state *s, priority k);        // Inserts state s with priority k
+  void Update(state *s, priority k);        // Updates state s in the PQ(new k)
+  priority TopKey();                        // Returns the key of least priority
+  void Remove(state *s);                    // Removes state s from the PQ
+  bool Empty();                             // Returns if the PQ is empty
+  void Print();                             // Prints the PQ (least to greatest)
+  state *Top();                             // Returns the state with the least priority
+  state *Pop();                             // Returns the state with the least prioirty
+  bool Present(state *s);                   // Returns if the state s is in the PQ
+  int GetSize();                            // Returns the size of the PQ
+  void GetAllNodes(std::vector<state*> &v); // Puts all states in the PQ in v
+  void Clear();
 
 private:
-  std::multiset<state *>::iterator it;
-  std::multiset<state *,comp> storage;
-  std::multiset<state *,comppos> present;
+  std::multiset<state *>::iterator it;      // iterator
+  std::multiset<state *,comp> storage;      // PQ
 };
 
 #endif
