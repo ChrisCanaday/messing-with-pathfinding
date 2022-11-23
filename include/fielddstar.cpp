@@ -64,8 +64,10 @@ void FDstar::UpdateVertex(state *u)
   // if not goal set rhs
   if (*u != *s_goal){
     //GetSuccessors(u, tmp);
+    std::cerr << "GETCONNBRS" << std::endl;
     GetConnbrs(u,tmp);
 
+    std::cerr << "FOR LOOP" << std::endl;
     for (size_t i = 0; i < tmp.size(); i++){
       tmprhs = std::min(tmprhs, ComputeCost(u,tmp[i].first,tmp[i].second));
     }
@@ -123,7 +125,9 @@ void FDstar::Main()
 
   // init, make initial run, start path
   Initialize();
+  std::cerr << "BEFORE" << std::endl;
   ComputeShortestPath();
+  std::cerr << "AFTER" << std::endl;
   path.push_back(s_start);
 
   // test change
@@ -237,6 +241,7 @@ double FDstar::ComputeCost(state *s, state *s_a, state *s_b){
     state *s1, *s2;
     double c, b, v_s, f, x, y, comp;
     comp = inf;
+    v_s = inf;
 
     if(CalculateHeuristic(s_a,s) != 1){
         s1 = s_b;
@@ -246,60 +251,94 @@ double FDstar::ComputeCost(state *s, state *s_a, state *s_b){
         s2 = s_b;
     }
 
+    std::cerr << "CC AND BB" << std::endl;
     c = CalculateHeuristic(s,s1) + CalculateHeuristic(s1,s2);
     b = CalculateHeuristic(s,s1);
 
+    std::cerr << "IF" << std::endl;
     if(std::min(c,b) == comp){
+        std::cerr << "IF TRUE" << std::endl;
         v_s = std::min(c,b) + s1->g;
     }else{
+        std::cerr << "IF FALSE" << std::endl;
         f = s1->g - s2->g;
 
         if(f <= b){
-            if(c <- f){
+            std::cerr << "F<=B" << std::endl;
+            if(c <= f){
+                std::cerr << "C<=F" << std::endl;
                 v_s = c*sqrt(2) + s2->g;
             }else{
+                std::cerr << "C>F" << std::endl;
                 y = std::min(f/(sqrt(c*c-f*f)),(double) 1);
                 v_s = c*sqrt(1+y*y) + f*(1-y) + s2->g;
             }
         }else{
+            std::cerr << "F>B" << std::endl;
             if(c <= b){
+                std::cerr << "C<=B" << std::endl;
                 v_s = c*sqrt(2) + s2->g;
             }else{
+                std::cerr << "B>C" << std::endl;
                 x = 1-std::min(b/(sqrt(c*c-b*b)),(double) 1);
                 v_s = c*sqrt(1+(1-x)*(1-x)) + b*x + s2->g;
             }
         }
     }
 
+    std::cerr << "END " << v_s << std::endl;
     return v_s;
 }
 
-void FDstar::GetConnbrs(state *s, std::vector<std::pair<state*,state*> > &v){
+void FDstar::GetConnbrs(state *s, std::vector<std::pair<state*,state*> > &v)
+{
     std::pair<state*,state*> tmp;
+    std::vector<state*> t;
     v.clear();
 
-    tmp.first = grid[s->i+1][s->j-1];
-    tmp.second = grid[s->i+1][s->j];
-    v.push_back(tmp);
-    tmp.first = tmp.second;
-    tmp.second = grid[s->i+1][s->j+1];
-    v.push_back(tmp);
-    tmp.first = tmp.second;
-    tmp.second = grid[s->i][s->j+1];
-    v.push_back(tmp);
-    tmp.first = tmp.second;
-    tmp.second = grid[s->i-1][s->j+1];
-    v.push_back(tmp);
-    tmp.first = tmp.second;
-    tmp.second = grid[s->i-1][s->j];
-    v.push_back(tmp);
-    tmp.first = tmp.second;
-    tmp.second = grid[s->i-1][s->j-1];
-    v.push_back(tmp);
-    tmp.first = tmp.second;
-    tmp.second = grid[s->i][s->j-1];
-    v.push_back(tmp);
-    tmp.first = tmp.second;
-    tmp.second = grid[s->i+1][s->j-1];
-    v.push_back(tmp);
+    if(InBounds(s->i+1,s->j-1) && InBounds(s->i+1,s->j)){
+        tmp.first = grid[s->i+1][s->j-1];
+        tmp.second = grid[s->i+1][s->j];
+        v.push_back(tmp);
+    }
+    if(InBounds(s->i+1,s->j) && InBounds(s->i+1,s->j+1)){
+        tmp.first = grid[s->i+1][s->j];
+        tmp.second = grid[s->i+1][s->j+1];
+        v.push_back(tmp);
+    }
+    if(InBounds(s->i+1,s->j+1) && InBounds(s->i,s->j+1)){
+        tmp.first = grid[s->i+1][s->j+1];
+        tmp.second = grid[s->i][s->j+1];
+        v.push_back(tmp);
+    }
+    if(InBounds(s->i,s->j+1) && InBounds(s->i-1,s->j+1)){
+        tmp.first = grid[s->i][s->j+1];
+        tmp.second = grid[s->i-1][s->j+1];
+        v.push_back(tmp);
+    }
+    if(InBounds(s->i-1,s->j+1) && InBounds(s->i-1,s->j)){
+        tmp.first = grid[s->i-1][s->j+1];
+        tmp.second = grid[s->i-1][s->j];
+        v.push_back(tmp);
+    }
+    if(InBounds(s->i-1,s->j) && InBounds(s->i-1,s->j-1)){
+        tmp.first = grid[s->i-1][s->j];
+        tmp.second = grid[s->i-1][s->j-1];
+        v.push_back(tmp);
+    }
+    if(InBounds(s->i-1,s->j-1) && InBounds(s->i,s->j-1)){
+        tmp.first = grid[s->i-1][s->j-1];
+        tmp.second = grid[s->i][s->j-1];
+        v.push_back(tmp);
+    }
+    if(InBounds(s->i,s->j-1) && InBounds(s->i+1,s->j-1)){
+        tmp.first = grid[s->i][s->j-1];
+        tmp.second = grid[s->i+1][s->j-1];
+        v.push_back(tmp);
+    }
+}
+
+bool FDstar::InBounds(const int i, const int j) const
+{
+    return (i >= 0 && i < (int) grid.size() && j >= 0 && j < (int) grid[0].size());
 }

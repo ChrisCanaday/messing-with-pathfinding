@@ -19,6 +19,7 @@ public:
   bool IsOccupied(const int i, const int j) const;
   double ComputeCost(state *s, state *s_a, state *s_b);
   void GetConnbrs(state *s, std::vector<std::pair<state*,state*> > &v);
+  bool InBounds(const int i, const int j) const;
   // void SetStart();
   // void SetEnd();
 
