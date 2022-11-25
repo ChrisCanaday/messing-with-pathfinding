@@ -71,6 +71,7 @@ void FDstar::UpdateVertex(state *u)
     for (size_t i = 0; i < tmp.size(); i++){
       tmprhs = std::min(tmprhs, ComputeCost(u,tmp[i].first,tmp[i].second));
     }
+    std::cerr << "NEW RHS VALUE: " << tmprhs << std::endl;
     u->rhs = tmprhs;
   }
 
