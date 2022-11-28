@@ -1,7 +1,7 @@
-#include "../include/fielddstar.h"
+#include "../include/dstar.h"
 
 int main(){
-    /*Dstar dstar;
+    Dstar dstar;
     int i,j;
     state min2;
     std::vector<state> s;
@@ -31,17 +31,7 @@ int main(){
     }
     
     printf("\nHEAP\n");
-    dstar.U.Print();*/
-
-    FDstar dstar;
-    dstar.Main();
-
-    printf("\nPATH\n");
-    int i;
-    for(i = 0; i < (int) dstar.path.size(); i++){
-        printf("%d:%d ",dstar.path[i]->i,dstar.path[i]->j);
-        std::cout << dstar.path[i]->k.first << "|" << dstar.path[i]->k.second << " rhs: " << dstar.path[i]->rhs << " g " << dstar.path[i]->g << std::endl;
-    }
+    dstar.U.Print();
     
     return 0;
 }
