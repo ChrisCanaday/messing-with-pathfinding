@@ -1,4 +1,5 @@
 #include "dstar.h"
+#include <iomanip>
 
 /* Calculates the key (priority) of the state s */
 priority Dstar::CalculateKey(state *s)
@@ -40,8 +41,8 @@ void Dstar::Initialize()
   // print original board state
   for (size_t i = 0; i < grid.size(); i++){
     for (size_t j = 0; j < grid[0].size(); j++){
-      printf("%lu:%lu ", i, j);
-      std::cout << grid[i][j]->k.first << "|" << grid[i][j]->k.second << std::endl;
+      //printf("%lu:%lu ", i, j);
+      //std::cout << grid[i][j]->k.first << "|" << grid[i][j]->k.second << std::endl;
     }
   }
 
@@ -121,8 +122,12 @@ void Dstar::Main()
 
   // init, make initial run, start path
   Initialize();
+  //JGRAPHPrintGrid();
   ComputeShortestPath();
   path.push_back(s_start);
+  JGRAPHPrintGrid();
+
+  //JGRAPHPrintGrid();
 
   // test change
   changed = true;
@@ -229,3 +234,93 @@ bool Dstar::IsOccupied(const int i, const int j) const
   // return if the node is a wall
   return (grid[i][j]->cost < 0);
 };
+
+void Dstar::PrintBox(int i, int j){
+  //std::cout << "newline poly pfill 0 pts" << std::endl;
+  if(grid[i][j]->cost == -1){
+    std::cout << "newline poly pfill 0 pts" << std::endl;
+  }else{
+    if(*grid[i][j] == *s_start){
+      if(*s_start == *s_goal){
+        std::cout << "newline poly pcfill 1 0 1 pts" << std::endl;
+      }else{
+        std::cout << "newline poly pcfill 1 128 0 pts" << std::endl;
+      }
+      //std::cout << "newline poly pcfill 1 128 0 pts" << std::endl;
+    }else{
+      if(*grid[i][j] == *s_goal){
+        std::cout << "newline poly pcfill 0 128 0 pts" << std::endl;
+      }else{
+        std::cout << "newline poly pfill 1 pts" << std::endl;
+      }
+    }
+  }
+
+  /*std::cout << i << " " << -1*j << std::endl;
+  std::cout << (i+1) << " " << -1*j << std::endl;
+  std::cout << (i+1) << " " << -1*(j+1) << std::endl;
+  std::cout << i << " " << -1*(j+1) << std::endl;
+  std::cout << i << " " << -1*j << std::endl;*/
+
+  std::cout << j << " " << -1*i << std::endl;
+  std::cout << (j+1) << " " << -1*i << std::endl;
+  std::cout << (j+1) << " " << -1*(i+1) << std::endl;
+  std::cout << j << " " << -1*(i+1) << std::endl;
+  std::cout << j << " " << -1*i << std::endl;
+
+  double a,b, c;
+  a = j+.05;
+  b = -1*i-.2;
+  c = inf;
+  std::cout << std::setprecision(3);
+  if(grid[i][j]->g == c){
+    std::cout << "newstring hjl vjc x " << a << " y " << b  << " : g: " << "INF" << std::endl;
+    //printf("%2.2f\n",);
+  }else{
+    std::cout << "newstring hjl vjc x " << a << " y " << b  << " : g: ";
+    printf("%2.2f\n",grid[i][j]->g);
+  }
+
+  //a += .1;
+  b -= .3;
+  if(grid[i][j]->g == c){
+    std::cout << "newstring hjl vjc x " << a << " y " << b  << " : rhs: " << "INF" << std::endl;
+    //printf("%2.2f\n",);
+  }else{
+    std::cout << "newstring hjl vjc x " << a << " y " << b  << " : rhs: ";
+    printf("%2.2f\n",grid[i][j]->rhs);
+  }
+  b -= .3;
+  if(grid[i][j]->k.first == c && grid[i][j]->k.second != c){
+    std::cout << "newstring hjl vjc x " << a << " y " << b  << " : [INF,";
+    printf("%2.2f]\n",grid[i][j]->k.second);
+  }else if(grid[i][j]->k.first != c && grid[i][j]->k.second == c){
+    std::cout << "newstring hjl vjc x " << a << " y " << b  << " : [";
+    printf("%2.2f,INF]\n",grid[i][j]->k.first);
+  }else if(grid[i][j]->k.first == c && grid[i][j]->k.second == c){
+    std::cout << "newstring hjl vjc x " << a << " y " << b  << " : [" << "INF,INF]" << std::endl;
+  }else if(grid[i][j]->k.first != c && grid[i][j]->k.second != c){
+    std::cout << "newstring hjl vjc x " << a << " y " << b  << " : [";
+    printf("%2.2f,",grid[i][j]->k.first);
+    printf("%2.2f]\n",grid[i][j]->k.second);
+  }
+}
+
+void Dstar::JGRAPHPrintGrid(){
+  std::cout << "newgraph" << std::endl;
+  //std::cout << "xaxis nodraw" << std::endl;
+  //int s = (int) (grid[0].size()-1);
+  std::cout << "xaxis min -1 max " << grid[0].size()+1 << " nodraw" << std::endl;
+  //std::cout << "yaxis nodraw" << std::endl;
+  int s = (int) (grid.size()+1);
+  std::cout << "yaxis min " << -1*s << " max 1 nodraw" << std::endl;
+
+  //PrintBox(0,0);
+  //PrintBox(0,1);
+
+  for(size_t i = 0; i < grid.size(); i++){
+    for(size_t j = 0; j < grid[0].size(); j++){
+      PrintBox(i,j);
+    }
+  }
+}

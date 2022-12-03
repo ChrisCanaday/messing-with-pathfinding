@@ -17,6 +17,8 @@ public:
   void GetPredecessors(const state *u, std::vector<state *> &s);
   void GetSuccessors(const state *u, std::vector<state *> &s);
   bool IsOccupied(const int i, const int j) const;
+  void JGRAPHPrintGrid();
+  void PrintBox(int i, int j);
   // void SetStart();
   // void SetEnd();
 

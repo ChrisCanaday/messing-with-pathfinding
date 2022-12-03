@@ -2,7 +2,7 @@
 
 int main(){
     Dstar dstar;
-    int i,j;
+    //int i,j;
     state min2;
     std::vector<state> s;
     std::vector<state> path;
@@ -15,7 +15,7 @@ int main(){
 
     
 
-    for(i = 0; i < (int) dstar.grid.size(); i++){
+    /*for(i = 0; i < (int) dstar.grid.size(); i++){
         for(j = 0; j < (int) dstar.grid[0].size(); j++){
             printf("%d:%d ",i,j);
             std::cout << dstar.grid[i][j]->k.first << "|" << dstar.grid[i][j]->k.second << std::endl;
@@ -31,7 +31,9 @@ int main(){
     }
     
     printf("\nHEAP\n");
-    dstar.U.Print();
+    dstar.U.Print();*/
+
+    //dstar.JGRAPHPrintGrid();
     
     return 0;
 }
