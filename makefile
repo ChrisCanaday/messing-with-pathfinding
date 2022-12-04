@@ -1,4 +1,4 @@
-all: clean obj/state.o obj/DS.o obj/pqs.o
+all: clean obj/state.o obj/DS.o obj/pqs.o a.out bin/seperate
 	g++ -Wall -Wextra -O0 -o bin/PathFinder src/main.cpp obj/state.o obj/DS.o obj/pqs.o
 
 obj/state.o:
@@ -12,6 +12,9 @@ obj/pqs.o:
 
 obj/FDS.o:
 	g++ -Wall -Wextra -O0 -c -o obj/FDS.o include/fielddstar.cpp
+
+bin/seperate:
+	g++ -o bin/seperate seperate.cpp
 
 clean:
 	rm -rf obj/*

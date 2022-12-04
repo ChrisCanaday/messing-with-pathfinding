@@ -1,5 +1,4 @@
 #include "dstar.h"
-#include <iomanip>
 
 /* Calculates the key (priority) of the state s */
 priority Dstar::CalculateKey(state *s)
@@ -13,23 +12,27 @@ priority Dstar::CalculateKey(state *s)
 };
 
 /* Initializes the Dstar class*/
-void Dstar::Initialize()
+void Dstar::Initialize(int height, int width)
 {
+  std::chrono::steady_clock::time_point begin, end;
   std::vector<state *> tmp;
   state *s;
 
   U.Clear(); // U = NULL
+  
+  begin = std::chrono::steady_clock::now();
+
 
   // init grid
-  for (int i = 0; i < 5; i++){
+  for (int i = 0; i < height; i++){
     tmp.clear();
-    for (int j = 0; j < 3; j++){
+    for (int j = 0; j < width; j++){
       s = new state;
-      if ((i == 2 || i == 1 || i == 3 /*|| i == 4*/) && j == 1){
+      /*if ((i == 2 || i == 1 || i == 3 || i == 4) && j == 1){
         s->cost = -1;
-      }else{
+      }else{*/
         s->cost = 1;
-      }
+      //}
 
       s->i = i;
       s->j = j;
@@ -37,22 +40,25 @@ void Dstar::Initialize()
     }
     grid.push_back(tmp);
   }
-
-  // print original board state
-  for (size_t i = 0; i < grid.size(); i++){
-    for (size_t j = 0; j < grid[0].size(); j++){
-      //printf("%lu:%lu ", i, j);
-      //std::cout << grid[i][j]->k.first << "|" << grid[i][j]->k.second << std::endl;
-    }
-  }
+  int k;
+  /*for(int i = 0; i < height*width/10; i++){
+    k = rand();
+    k = k % (height*width);
+    std::cout << k/height << " : " << k%height << std::endl;
+    grid[k/height][k%height]->cost = -1;
+  }*/
+  //std::cout << "after" << std::endl;
 
   // set start and goal
-  s_start = grid[1][0];
-  s_goal = grid[4][2];
+  s_start = grid[0][0];
+  s_goal = grid[height-1][width-1];
 
   // setup PQ
   s_goal->rhs = 0;
   U.Insert(s_goal, CalculateKey(s_goal));
+  end = std::chrono::steady_clock::now();
+
+  //std::cout << "Initialization Time = " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " [ms]" << std::endl;
 };
 
 /* Updates state u in the PQ */
@@ -86,6 +92,7 @@ void Dstar::ComputeShortestPath()
   size_t i;
 
   while (U.TopKey() < CalculateKey(s_start) || s_start->rhs != s_start->g){
+    //JGRAPHPrintGrid();
     u = U.Pop();
 
     // if overly consistent make it locally consistent
@@ -111,7 +118,7 @@ void Dstar::ComputeShortestPath()
 };
 
 /* Main D* Lite Driver */
-void Dstar::Main()
+void Dstar::Main(int height, int width)
 {
   std::vector<state *> tmp;
   state *tmpstate;
@@ -121,18 +128,28 @@ void Dstar::Main()
   halt = inf;
 
   // init, make initial run, start path
-  Initialize();
+  Initialize(height, width);
+
+  std::chrono::steady_clock::time_point begin, end;
   //JGRAPHPrintGrid();
+
+  begin = std::chrono::steady_clock::now();
+  //std::cout << "A" << std::endl;
   ComputeShortestPath();
+
+  end = std::chrono::steady_clock::now();
   path.push_back(s_start);
-  JGRAPHPrintGrid();
+
+  //std::cout << "ComputeShortestPath() Time = " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " [ms]" << std::endl;
+  //JGRAPHPrintGrid();
 
   //JGRAPHPrintGrid();
+  //std::cout << "B" << std::endl;
 
   // test change
-  changed = true;
-  GetSuccessors(grid[4][1], tmp);
-  grid[4][1]->cost = -1;
+  //changed = true;
+  //GetSuccessors(grid[4][1], tmp);
+  //grid[4][1]->cost = -1;
   for (size_t i = 0; i < tmp.size(); i++) changed_edges.push_back(tmp[i]);
 
   // the loop to progress from start to finish
@@ -273,6 +290,8 @@ void Dstar::PrintBox(int i, int j){
   b = -1*i-.2;
   c = inf;
   std::cout << std::setprecision(3);
+
+  if(grid.size() > 8 || grid[0].size() > 4) return;
   if(grid[i][j]->g == c){
     std::cout << "newstring hjl vjc x " << a << " y " << b  << " : g: " << "INF" << std::endl;
     //printf("%2.2f\n",);

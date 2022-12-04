@@ -11,7 +11,8 @@ int main(){
     min.second = DBL_MAX;
     min2.k = min;
 
-    dstar.Main();
+    dstar.Main(100,100);
+    dstar.JGRAPHPrintGrid();
 
     
 
