@@ -158,11 +158,13 @@ int Dstar::Main(int height, int width)
   state *tmpstate;
   double min, oldmin, halt;
   size_t i, it = 0;
+  std::chrono::steady_clock::time_point begin, end;
 
   halt = inf;
   //s_last = s_start;
 
   // init, make initial run, start path
+  begin = std::chrono::steady_clock::now();
   Initialize(height, width);
   s_last = s_start;
   original_start = s_start;
@@ -173,10 +175,8 @@ int Dstar::Main(int height, int width)
   std::uniform_int_distribution<std::mt19937::result_type> udist(0,100);
   std::mt19937::result_type random_number = udist(rng);
 
-  std::chrono::steady_clock::time_point begin, end;
   //JGRAPHPrintGrid();
 
-  begin = std::chrono::steady_clock::now();
   //std::cout << "A" << std::endl;
   ComputeShortestPath();
   //end = std::chrono::steady_clock::now();
