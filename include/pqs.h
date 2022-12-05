@@ -20,6 +20,7 @@ public:
   int GetSize();                            // Returns the size of the PQ
   void GetAllNodes(std::vector<state*> &v); // Puts all states in the PQ in v
   void Clear();
+  int accesses = 0;
 
 private:
   std::multiset<state *>::iterator it;      // iterator

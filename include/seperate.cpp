@@ -7,7 +7,7 @@ using namespace std;
 
 // seperates jgraphs into different files
 int main(int argc, char **argv){
-    string input, name = "t", end = ".txt", filename, filename2, s, commandname, end2 = ".png";
+    string input, name = "t", end = ".txt", filename, filename2, s, commandname, end2 = ".jpg";
     int i = 0, j;
     FILE *fout = NULL;
     

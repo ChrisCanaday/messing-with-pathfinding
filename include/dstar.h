@@ -14,18 +14,17 @@ public:
   void Initialize(int height, int width);
   void UpdateVertex(state *u);
   void ComputeShortestPath();
-  void Main(int height, int width);
+  int Main(int height, int width);
   double CalculateHeuristic(const state *to, const state *from) const;
   void GetPredecessors(const state *u, std::vector<state *> &s);
   void GetSuccessors(const state *u, std::vector<state *> &s);
-  bool IsOccupied(const int i, const int j) const;
+  bool IsOccupied(const int i, const int j);
   void JGRAPHPrintGrid();
   void PrintBox(int i, int j);
+  void JGRAPHMakeRuntimeGraph();
   bool OnPath(int i, int j);
-  // void SetStart();
-  // void SetEnd();
 
-//private:
+private:
   state *s_start, *s_goal, *s_last, *original_start, *last_state;
   bool changed;
   double k_m;

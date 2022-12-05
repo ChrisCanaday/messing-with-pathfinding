@@ -4,6 +4,7 @@ void PQ::Insert(state *s, std::pair<double, double> k)
 {
   s->k = k;
   storage.insert(s);
+  accesses++;
 }
 
 void PQ::Update(state *s, std::pair<double, double> k)

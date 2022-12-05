@@ -1,4 +1,5 @@
 #include "dstar.h"
+#include <random>
 
 /* Calculates the key (priority) of the state s */
 priority Dstar::CalculateKey(state *s)
@@ -22,17 +23,16 @@ void Dstar::Initialize(int height, int width)
   
   begin = std::chrono::steady_clock::now();
 
-
   // init grid
   for (int i = 0; i < height; i++){
     tmp.clear();
     for (int j = 0; j < width; j++){
       s = new state;
-      if ((i == 2 || i == 1 || i == 3 /*|| i == 4*/) && j == 1){
-        s->cost = -1;
-      }else{
+      //if ((i == 2 || i == 1 || i == 3 || i == 4) && j == 1){
+      //  s->cost = -1;
+      //}else{
         s->cost = 1;
-      }
+      //}
 
       s->i = i;
       s->j = j;
@@ -40,19 +40,43 @@ void Dstar::Initialize(int height, int width)
     }
     grid.push_back(tmp);
   }
+  /*tmp.resize(width,NULL);
+  grid.resize(height,tmp);
 
-  grid[4][1]->cost = 2;
-  int k;
+  s = new state;
+  s->i = 0;
+  s->j = 0;
+  s->cost = 1;
+  grid[0][0] = s;
+  s = new state;
+  s->i = height-1;
+  s->j = width-1;
+  s->cost = 1;
+  grid[height-1][width-1] = s;*/
+
+  //grid[4][1]->cost = 2;
+  int k,l;
   /*for(int i = 0; i < height*width/10; i++){
     k = rand();
     k = k % (height*width);
     std::cout << k/height << " : " << k%height << std::endl;
     grid[k/height][k%height]->cost = -1;
   }*/
+  //srand((unsigned) time(NULL));
+  /*for(int i = 0; i < (height)*(width)/10; i++){
+    //srand(time(0));
+    k = rand();
+    k = k % height;
+    l = rand();
+    l = l % width;
+    if((k != 0 && l != 0) && (k != height-1 && l != width-1)){
+      grid[k][l]->cost = -1;
+    }
+  }*/
   //std::cout << "after" << std::endl;
 
   // set start and goal
-  s_start = grid[1][0];
+  s_start = grid[0][0];
   s_goal = grid[height-1][width-1];
   k_m = 0;
   last_state = NULL;
@@ -122,18 +146,18 @@ void Dstar::ComputeShortestPath()
         UpdateVertex(tmp[i]);
       }
     }
-    JGRAPHPrintGrid();
+    //JGRAPHPrintGrid();
   }
   last_state = NULL;
 };
 
 /* Main D* Lite Driver */
-void Dstar::Main(int height, int width)
+int Dstar::Main(int height, int width)
 {
   std::vector<state *> tmp;
   state *tmpstate;
   double min, oldmin, halt;
-  size_t i;
+  size_t i, it = 0;
 
   halt = inf;
   //s_last = s_start;
@@ -143,18 +167,25 @@ void Dstar::Main(int height, int width)
   s_last = s_start;
   original_start = s_start;
 
+  std::mt19937::result_type const seedval = time(NULL);
+  std::mt19937 rng;
+  rng.seed(seedval);
+  std::uniform_int_distribution<std::mt19937::result_type> udist(0,100);
+  std::mt19937::result_type random_number = udist(rng);
+
   std::chrono::steady_clock::time_point begin, end;
-  JGRAPHPrintGrid();
+  //JGRAPHPrintGrid();
 
   begin = std::chrono::steady_clock::now();
   //std::cout << "A" << std::endl;
   ComputeShortestPath();
+  //end = std::chrono::steady_clock::now();
   //JGRAPHPrintGrid();
 
-  end = std::chrono::steady_clock::now();
   path.push_back(s_start);
 
-  //std::cout << "ComputeShortestPath() Time = " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " [ms]" << std::endl;
+  //std::cout  << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
+  //begin = std::chrono::steady_clock::now();
   //JGRAPHPrintGrid();
 
   //JGRAPHPrintGrid();
@@ -170,7 +201,7 @@ void Dstar::Main(int height, int width)
   while (s_start != s_goal){
 
     // return if no path
-    if (s_start->g == halt) return;
+    if (s_start->g == halt) return -1;
 
     // Calculate the next step
     GetSuccessors(s_start, tmp);
@@ -188,20 +219,40 @@ void Dstar::Main(int height, int width)
     // set start to the next step and add it to the path
     s_start = tmpstate;
     path.push_back(s_start);
-    JGRAPHPrintGrid();
+    //JGRAPHPrintGrid();
 
     // move robot to start
 
-    if(s_start->i == 3 && s_start->j == 0){
+    /*if(s_start->i == 3 && s_start->j == 0){
       changed = true;
       GetSuccessors(grid[4][1], tmp);
       grid[4][1]->cost = -1;
       for(size_t i = 0; i < tmp.size(); i++) changed_edges.push_back(tmp[i]);
-    }
+    }*/
+    //random_number = udist(rng);
+    //if(random_number < 5){
+      //std::cerr << s_start->i+1 << ":" << s_start->j+1 << std::endl;
+      if(it != 1){
+      //if(!IsOccupied(s_start->i+1,s_start->j+1) && *grid[s_start->i+1][s_start->j+1] != *s_goal){
+        changed = true;
+        //std::cerr << "AA" << std::endl;
+        for(i = 0; i < grid.size(); i++){
+          grid[i][grid.size()-i-1]->cost = -1;
+          GetSuccessors(grid[s_start->i+1][s_start->j+1], tmp);
+          for (size_t j = 0; j < tmp.size(); j++) changed_edges.push_back(tmp[j]);
+        }
+        //grid[s_start->i+1][s_start->j+1]->cost = -1;
+        //GetSuccessors(grid[s_start->i+1][s_start->j+1], tmp);
+        //for (size_t i = 0; i < tmp.size(); i++) changed_edges.push_back(tmp[i]);
+      //}
+        it = 1;
+      }
+    //}
 
     // check for changes
 
-    if (changed){
+    
+    if(changed){
       k_m = k_m + CalculateHeuristic(s_last,s_start);
       s_last = s_start;
 
@@ -216,8 +267,16 @@ void Dstar::Main(int height, int width)
       changed_edges.clear();
     }
   }
+  for(i = 0; i < grid.size(); i++){
+    for(size_t j = 0; j < grid[0].size(); j++){
+      free(grid[i][j]);
+    }
+  }
+  end = std::chrono::steady_clock::now();
+  //std::cout<< std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
   s_start = original_start;
   s_last = NULL;
+  return std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
 };
 
 /* Calculates the cost from one node to another. Uses Euclidean Distance */
@@ -262,11 +321,20 @@ void Dstar::GetSuccessors(const state *u, std::vector<state *> &s)
 };
 
 /* Returns if the cell at i,j is untraversable */
-bool Dstar::IsOccupied(const int i, const int j) const
+bool Dstar::IsOccupied(const int i, const int j)
 {
+  state *s;
   // check to see if you are outside of the grid
   if (i >= (int)grid.size() || i < 0) return true;
   if (j >= (int)grid[0].size() || j < 0) return true;
+
+  /*if(grid[i][j] == NULL){
+    s = new state;
+    s->i = i;
+    s->j = j;
+    s->cost = 1;
+    grid[i][j] = s;
+  }*/
   
   // return if the node is a wall
   return (grid[i][j]->cost < 0);
@@ -428,4 +496,10 @@ bool Dstar::OnPath(int i, int j){
         if(path[k]->i == i && path[k]->j == j) return true;
     }
     return false;
+}
+
+void Dstar::JGRAPHMakeRuntimeGraph(){
+  std::cout << "newgraph" << std::endl;
+  std::cout << "xaxis min 0 max 1000000 log label: Number Nodes" << std::endl;
+  std::cout << "yaxis min 0 max 10 linear label: Time (ms)" << std::endl;
 }
