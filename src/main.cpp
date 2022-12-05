@@ -1,7 +1,9 @@
 #include "../include/dstar.h"
+#include "../include/lpastar.h"
 
 int main(){
     Dstar dstar;
+    LPAstar lpastar;
     //int i,j;
     state min2;
     std::vector<state> s;
@@ -11,9 +13,11 @@ int main(){
     min.second = DBL_MAX;
     min2.k = min;
 
-    dstar.Main(100,100);
-    dstar.JGRAPHPrintGrid();
+    //dstar.Main(5,3);
+    //dstar.JGRAPHPrintGrid();
 
+    lpastar.Main(5, 3);
+    //lpastar.JGRAPHPrintGrid();
     
 
     /*for(i = 0; i < (int) dstar.grid.size(); i++){

@@ -30,7 +30,7 @@ int main(int argc, char **argv){
         s = to_string(j);
         filename = name + s + end;
         filename2 = name + s + end2;
-        commandname = "./jgraph/jgraph -P " + filename + " | ps2pdf - | convert -density 600 - -quality 100 " + filename2;
+        commandname = "./jgraph/jgraph -P " + filename + " | ps2pdf - | convert -density 300 - -quality 100 " + filename2;
         cout << commandname << endl;
         system(commandname.c_str());
     }

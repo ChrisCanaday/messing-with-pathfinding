@@ -1,5 +1,5 @@
-#ifndef DSTAR_H
-#define DSTAR_H
+#ifndef LPASTAR_H
+#define LPASTAR_H
 
 #include "pqs.h"
 #include <algorithm>
@@ -7,7 +7,7 @@
 #include <iomanip>
 #include <chrono>
 
-class Dstar
+class LPAstar
 {
 public:
   priority CalculateKey(state *s);
@@ -26,10 +26,8 @@ public:
   // void SetEnd();
 
 //private:
-  state *s_start, *s_goal, *s_last, *original_start, *last_state;
+  state *s_start, *s_goal, *s_last;
   bool changed;
-  double k_m;
-  priority k_old;
 
   PQ U;
   std::vector<std::vector<state *> > grid;
